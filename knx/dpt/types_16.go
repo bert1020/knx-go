@@ -62,6 +62,9 @@ func (d DPT_16000) IsValid() bool {
 func (d DPT_16000) String() string {
 	return string(d)
 }
+func (d DPT_16000) Float() float64 {
+	return 1.0
+}
 
 // DPT_16001 represents DPT 16.001 / String 8859-1.
 // The string must be ISO-8859-1 and contain at most 14 chars.
@@ -117,4 +120,7 @@ func (d DPT_16001) IsValid() bool {
 
 func (d DPT_16001) String() string {
 	return string(d)
+}
+func (d DPT_16001) Float() float64 {
+	return 1.0
 }

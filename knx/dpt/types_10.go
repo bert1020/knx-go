@@ -60,3 +60,7 @@ func (d DPT_10001) String() string {
 		return fmt.Sprintf("%02d:%02d:%02d", d.Hour, d.Minutes, d.Seconds)
 	}
 }
+
+func (d DPT_10001) Float() float64 {
+	return 1.0
+}

@@ -40,6 +40,10 @@ func (d DPT_20102) String() string {
 	}
 }
 
+func (d DPT_20102) Float() float64 {
+	return float64(d)
+}
+
 // DPT_20105 represents DPT 20.105 / HVACContrMode.
 type DPT_20105 uint8
 
@@ -104,4 +108,8 @@ func (d DPT_20105) String() string {
 		return "NoDem"
 	}
 	return "reserved"
+}
+
+func (d DPT_20105) Float() float64 {
+	return float64(d)
 }

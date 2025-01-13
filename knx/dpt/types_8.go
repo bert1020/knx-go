@@ -25,6 +25,9 @@ func (d DPT_8001) Unit() string {
 func (d DPT_8001) String() string {
 	return fmt.Sprintf("%d pulses", int16(d))
 }
+func (d DPT_8001) Float() float64 {
+	return float64(d)
+}
 
 // DPT_8002 represents DPT 8.002 / delta time ms.
 type DPT_8002 int16
@@ -43,6 +46,9 @@ func (d DPT_8002) Unit() string {
 
 func (d DPT_8002) String() string {
 	return fmt.Sprintf("%d ms", int16(d))
+}
+func (d DPT_8002) Float() float64 {
+	return float64(d)
 }
 
 // DPT_8003 represents DPT 8.003 / delta time ms (range -327.68 s ... 327.67 s)
@@ -71,6 +77,9 @@ func (d DPT_8003) Unit() string {
 func (d DPT_8003) String() string {
 	return fmt.Sprintf("%f ms", d)
 }
+func (d DPT_8003) Float() float64 {
+	return float64(d)
+}
 
 // DPT_8004 represents DPT 8.004 / delta time ms (range -3276.8 s ... 3276.7 s)
 type DPT_8004 float32
@@ -98,6 +107,9 @@ func (d DPT_8004) Unit() string {
 func (d DPT_8004) String() string {
 	return fmt.Sprintf("%f ms", d)
 }
+func (d DPT_8004) Float() float64 {
+	return float64(d)
+}
 
 // DPT_8005 represents DPT 8.005 / delta time seconds
 type DPT_8005 int16
@@ -116,6 +128,9 @@ func (d DPT_8005) Unit() string {
 
 func (d DPT_8005) String() string {
 	return fmt.Sprintf("%d s", int16(d))
+}
+func (d DPT_8005) Float() float64 {
+	return float64(d)
 }
 
 // DPT_8006 represents DPT 8.006 / delta time minutes
@@ -136,6 +151,9 @@ func (d DPT_8006) Unit() string {
 func (d DPT_8006) String() string {
 	return fmt.Sprintf("%d min", int16(d))
 }
+func (d DPT_8006) Float() float64 {
+	return float64(d)
+}
 
 // DPT_8007 represents DPT 8.007 / delta time hours
 type DPT_8007 int16
@@ -154,6 +172,9 @@ func (d DPT_8007) Unit() string {
 
 func (d DPT_8007) String() string {
 	return fmt.Sprintf("%d h", int16(d))
+}
+func (d DPT_8007) Float() float64 {
+	return float64(d)
 }
 
 // DPT_8010 represents DPT 8.010 / percentage difference
@@ -182,6 +203,9 @@ func (d DPT_8010) Unit() string {
 func (d DPT_8010) String() string {
 	return fmt.Sprintf("%f %%", d)
 }
+func (d DPT_8010) Float() float64 {
+	return float64(d)
+}
 
 // DPT_8011 represents DPT 8.011 / Rotation angle °.
 type DPT_8011 int16
@@ -200,4 +224,7 @@ func (d DPT_8011) Unit() string {
 
 func (d DPT_8011) String() string {
 	return fmt.Sprintf("%d °", int16(d))
+}
+func (d DPT_8011) Float() float64 {
+	return float64(d)
 }

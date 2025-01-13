@@ -20,3 +20,6 @@ func (d DPT_6010) Unit() string {
 func (d DPT_6010) String() string {
 	return fmt.Sprintf("%d counter pulses", d)
 }
+func (d DPT_6010) Float() float64 {
+	return float64(d)
+}

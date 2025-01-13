@@ -12,6 +12,8 @@ type DatapointValue interface {
 
 	// Unpack a the datapoint value from a byte array.
 	Unpack(data []byte) error
+
+	Float() float64
 }
 
 // DatapointMeta gives meta information about a datapoint type.
