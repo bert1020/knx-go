@@ -21,5 +21,5 @@ func (d DPT_12001) String() string {
 	return fmt.Sprintf("%d pulses", uint32(d))
 }
 func (d DPT_12001) Float() float64 {
-	return 1.0
+	return float64(d)
 }

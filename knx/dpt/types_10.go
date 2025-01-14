@@ -62,5 +62,5 @@ func (d DPT_10001) String() string {
 }
 
 func (d DPT_10001) Float() float64 {
-	return 1.0
+	return float64(d.Weekday) + float64(d.Minutes) + float64(d.Hour) + float64(d.Seconds)
 }

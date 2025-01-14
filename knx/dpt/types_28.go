@@ -32,5 +32,5 @@ func (d DPT_28001) String() string {
 	return string(d)
 }
 func (d DPT_28001) Float() float64 {
-	return 1.0
+	return float64(len(d))
 }

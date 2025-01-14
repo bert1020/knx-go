@@ -58,5 +58,5 @@ func (d DPT_251600) String() string {
 	return fmt.Sprintf("Red: %d Green: %d Blue: %d White: %d RedValid: %t, GreenValid: %t, BlueValid: %t, WhiteValid: %t", d.Red, d.Green, d.Blue, d.White, d.RedValid, d.GreenValid, d.BlueValid, d.WhiteValid)
 }
 func (d DPT_251600) Float() float64 {
-	return float64(d.Red + d.Green + d.Blue + d.White)
+	return float64(d.Red) + float64(d.Green) + float64(d.Blue) + float64(d.White)
 }

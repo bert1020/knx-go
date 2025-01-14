@@ -37,5 +37,5 @@ func (d DPT_232600) String() string {
 	return fmt.Sprintf("#%02X%02X%02X", d.Red, d.Green, d.Blue)
 }
 func (d DPT_232600) Float() float64 {
-	return float64(d.Red + d.Green + d.Blue)
+	return float64(d.Red) + float64(d.Green) + float64(d.Blue)
 }

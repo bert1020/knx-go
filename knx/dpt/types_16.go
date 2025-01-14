@@ -63,7 +63,7 @@ func (d DPT_16000) String() string {
 	return string(d)
 }
 func (d DPT_16000) Float() float64 {
-	return 1.0
+	return float64(len(d))
 }
 
 // DPT_16001 represents DPT 16.001 / String 8859-1.
@@ -122,5 +122,5 @@ func (d DPT_16001) String() string {
 	return string(d)
 }
 func (d DPT_16001) Float() float64 {
-	return 1.0
+	return float64(len(d))
 }

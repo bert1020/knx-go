@@ -84,5 +84,5 @@ func (d DPT_11001) String() string {
 	return fmt.Sprintf("%04d-%02d-%02d", d.Year, d.Month, d.Day)
 }
 func (d DPT_11001) Float() float64 {
-	return 1.0
+	return float64(d.Year) + float64(d.Month) + float64(d.Day)
 }

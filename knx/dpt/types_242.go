@@ -78,5 +78,5 @@ func (d DPT_242600) String() string {
 	return fmt.Sprintf("x: %d y: %d Y: %d ColorValid: %t, BrightnessValid: %t", d.X, d.Y, d.YBrightness, d.ColorValid, d.BrightnessValid)
 }
 func (d DPT_242600) Float() float64 {
-	return float64(d.X) * float64(d.Y)
+	return float64(d.X) + float64(d.Y) + float64(d.YBrightness)
 }
