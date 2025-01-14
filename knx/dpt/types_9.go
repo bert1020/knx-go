@@ -5,6 +5,7 @@ package dpt
 
 import (
 	"fmt"
+	"strconv"
 )
 
 // DPT_9001 represents DPT 9.001 / Temperature °C.
@@ -45,6 +46,14 @@ func (d DPT_9001) String() string {
 func (d DPT_9001) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9001) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9001(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9002 represents DPT 9.002 / Temperature K.
 type DPT_9002 float32
@@ -83,6 +92,14 @@ func (d DPT_9002) String() string {
 }
 func (d DPT_9002) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9002) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9002(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9003 represents DPT 9.003 / Temperature K/h.
@@ -123,6 +140,14 @@ func (d DPT_9003) String() string {
 func (d DPT_9003) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9003) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9003(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9004 represents DPT 9.004 / Illumination lux.
 type DPT_9004 float32
@@ -161,6 +186,14 @@ func (d DPT_9004) String() string {
 }
 func (d DPT_9004) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9004) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9004(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9005 represents DPT 9.005 / Wind Speed m/s.
@@ -202,6 +235,14 @@ func (d DPT_9005) String() string {
 func (d DPT_9005) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9005) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9005(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9006 represents DPT 9.006 / Pressure Pa.
 type DPT_9006 float32
@@ -242,6 +283,14 @@ func (d DPT_9006) String() string {
 func (d DPT_9006) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9006) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9006(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9007 represents DPT 9.007 / Humidity %
 type DPT_9007 float32
@@ -281,6 +330,14 @@ func (d DPT_9007) String() string {
 }
 func (d DPT_9007) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9007) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9007(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9008 represents DPT 9.008 / Air quality ppm
@@ -323,6 +380,14 @@ func (d DPT_9008) String() string {
 func (d DPT_9008) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9008) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9008(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9010 represents DPT 9.010 / Time s.
 type DPT_9010 float32
@@ -361,6 +426,14 @@ func (d DPT_9010) String() string {
 }
 func (d DPT_9010) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9010) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9010(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9011 represents DPT 9.011 / Time ms.
@@ -401,6 +474,14 @@ func (d DPT_9011) String() string {
 func (d DPT_9011) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9011) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9011(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9020 represents DPT 9.020 / Volt mV.
 type DPT_9020 float32
@@ -439,6 +520,14 @@ func (d DPT_9020) String() string {
 }
 func (d DPT_9020) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9020) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9020(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9021 represents DPT 9.021 / Current mA.
@@ -479,6 +568,14 @@ func (d DPT_9021) String() string {
 func (d DPT_9021) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9021) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9021(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9022 represents DPT 9.022 / Power Density W/m2.
 type DPT_9022 float32
@@ -517,6 +614,14 @@ func (d DPT_9022) String() string {
 }
 func (d DPT_9022) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9022) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9022(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9023 represents DPT 9.023 / Kelvin per Percent K/%.
@@ -557,6 +662,14 @@ func (d DPT_9023) String() string {
 func (d DPT_9023) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9023) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9023(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9024 represents DPT 9.024 / Power kW.
 type DPT_9024 float32
@@ -595,6 +708,14 @@ func (d DPT_9024) String() string {
 }
 func (d DPT_9024) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9024) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9024(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9025 represents DPT 9.025 / Volume Flow l/h.
@@ -635,6 +756,14 @@ func (d DPT_9025) String() string {
 func (d DPT_9025) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9025) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9025(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9026 represents DPT 9.026 / Rain amount l/m^2.
 type DPT_9026 float32
@@ -673,6 +802,14 @@ func (d DPT_9026) String() string {
 }
 func (d DPT_9026) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9026) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9026(float32(result))
+	return d.Pack(), nil
 }
 
 // DPT_9027 represents DPT 9.027 / Temperature °F.
@@ -713,6 +850,14 @@ func (d DPT_9027) String() string {
 func (d DPT_9027) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9027) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9027(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9028 represents DPT 9.028 / Wind Speed km/h.
 type DPT_9028 float32
@@ -752,6 +897,14 @@ func (d DPT_9028) String() string {
 func (d DPT_9028) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_9028) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9028(float32(result))
+	return d.Pack(), nil
+}
 
 // DPT_9029 represents DPT 9.029 / Absolute air humidity g/m3.
 type DPT_9029 float32
@@ -790,4 +943,12 @@ func (d DPT_9029) String() string {
 }
 func (d DPT_9029) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_9029) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9029(float32(result))
+	return d.Pack(), nil
 }

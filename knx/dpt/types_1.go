@@ -33,6 +33,11 @@ func (d DPT_1001) Float() float64 {
 	}
 }
 
+func (d *DPT_1001) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "On"
+	return d.Pack(), nil
+}
+
 // DPT_1002 represents DPT 1.002 (G) / DPT_Bool.
 type DPT_1002 bool
 
@@ -62,6 +67,10 @@ func (d DPT_1002) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1002) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "On"
+	return d.Pack(), nil
 }
 
 // DPT_1003 represents DPT 1.003 (G) / DPT_Enable.
@@ -93,6 +102,10 @@ func (d DPT_1003) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1003) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Enable"
+	return d.Pack(), nil
+}
 
 // DPT_1004 represents DPT 1.004 (FB) / DPT_Ramp.
 type DPT_1004 bool
@@ -122,6 +135,10 @@ func (d DPT_1004) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1004) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Ramp"
+	return d.Pack(), nil
 }
 
 // DPT_1005 represents DPT 1.005 (FB) / DPT_Alarm.
@@ -153,6 +170,10 @@ func (d DPT_1005) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1005) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Alarm"
+	return d.Pack(), nil
+}
 
 // DPT_1006 represents DPT 1.006 (FB) / DPT_BinaryValue.
 type DPT_1006 bool
@@ -182,6 +203,10 @@ func (d DPT_1006) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1006) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "High"
+	return d.Pack(), nil
 }
 
 // DPT_1007 represents DPT 1.007 (FB) / DPT_Step.
@@ -213,6 +238,10 @@ func (d DPT_1007) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1007) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Increase"
+	return d.Pack(), nil
+}
 
 // DPT_1008 represents DPT 1.008 (G) / DPT_UpDown.
 type DPT_1008 bool
@@ -242,6 +271,10 @@ func (d DPT_1008) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1008) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Down"
+	return d.Pack(), nil
 }
 
 // DPT_1009 represents DPT 1.009 (G) / DPT_OpenClose.
@@ -273,6 +306,10 @@ func (d DPT_1009) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1009) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Close"
+	return d.Pack(), nil
+}
 
 // DPT_1010 represents DPT 1.010 (G) / DPT_Start.
 type DPT_1010 bool
@@ -302,6 +339,10 @@ func (d DPT_1010) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1010) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Start"
+	return d.Pack(), nil
 }
 
 // DPT_1011 represents DPT 1.011 (FB) / DPT_State.
@@ -333,6 +374,10 @@ func (d DPT_1011) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1011) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Active"
+	return d.Pack(), nil
+}
 
 // DPT_1012 represents DPT 1.012 (FB) / DPT_Invert.
 type DPT_1012 bool
@@ -362,6 +407,10 @@ func (d DPT_1012) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1012) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Inverted"
+	return d.Pack(), nil
 }
 
 // DPT_1013 represents DPT 1.013 (FB) / DPT_DimSendStyle.
@@ -393,6 +442,10 @@ func (d DPT_1013) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1013) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Cyclically"
+	return d.Pack(), nil
+}
 
 // DPT_1014 represents DPT 1.014 (FB) / DPT_InputSource.
 type DPT_1014 bool
@@ -422,6 +475,10 @@ func (d DPT_1014) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1014) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "Calculated"
+	return d.Pack(), nil
 }
 
 // DPT_1015 represents DPT 1.015 (G) / DPT_Reset.
@@ -453,6 +510,10 @@ func (d DPT_1015) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1015) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "reset command"
+	return d.Pack(), nil
+}
 
 // DPT_1016 represents DPT 1.016 (G) / DPT_Ack.
 type DPT_1016 bool
@@ -482,6 +543,10 @@ func (d DPT_1016) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1016) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "acknowledge command"
+	return d.Pack(), nil
 }
 
 // DPT_1017 represents DPT 1.017 (G) / DPT_Trigger.
@@ -513,6 +578,10 @@ func (d DPT_1017) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1017) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "trigger"
+	return d.Pack(), nil
+}
 
 // DPT_1018 represents DPT 1.018 (G) / DPT_Occupancy.
 type DPT_1018 bool
@@ -542,6 +611,10 @@ func (d DPT_1018) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1018) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "occupied"
+	return d.Pack(), nil
 }
 
 // DPT_1019 represents DPT 1.019 (G) / DPT_Window_Door.
@@ -573,6 +646,10 @@ func (d DPT_1019) Float() float64 {
 		return 0.0
 	}
 }
+func (d *DPT_1019) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "open"
+	return d.Pack(), nil
+}
 
 // DPT_1021 represents DPT 1.021 (FB) / DPT_LogicalFunction.
 type DPT_1021 bool
@@ -602,6 +679,10 @@ func (d DPT_1021) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1021) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "AND"
+	return d.Pack(), nil
 }
 
 // DPT_1022 represents DPT 1.022 (FB) / DPT_Scene_AB.
@@ -634,6 +715,11 @@ func (d DPT_1022) Float() float64 {
 	}
 }
 
+func (d *DPT_1022) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1" || data == "scene B"
+	return d.Pack(), nil
+}
+
 // DPT_1023 represents DPT 1.023 (FB) / DPT_ShutterBlinds_Mode.
 type DPT_1023 bool
 
@@ -662,6 +748,10 @@ func (d DPT_1023) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1023) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1"
+	return d.Pack(), nil
 }
 
 // DPT_1024 represents DPT 1.024 (G) / DPT_DayNight.
@@ -694,6 +784,11 @@ func (d DPT_1024) Float() float64 {
 	}
 }
 
+func (d *DPT_1024) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1"
+	return d.Pack(), nil
+}
+
 // DPT_1100 represents DPT 1.100 (FB) / DPT_Heat/Cool.
 type DPT_1100 bool
 
@@ -722,4 +817,8 @@ func (d DPT_1100) Float() float64 {
 	} else {
 		return 0.0
 	}
+}
+func (d *DPT_1100) ToByteArray(data string) ([]byte, error) {
+	*d = data == "1"
+	return d.Pack(), nil
 }

@@ -1,6 +1,9 @@
 package dpt
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // DPT_6010 represents DPT 6.010 / counter pulses (-128..127).
 type DPT_6010 int8
@@ -22,4 +25,12 @@ func (d DPT_6010) String() string {
 }
 func (d DPT_6010) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_6010) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_6010(result)
+	return d.Pack(), nil
 }

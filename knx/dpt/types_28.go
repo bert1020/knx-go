@@ -34,3 +34,7 @@ func (d DPT_28001) String() string {
 func (d DPT_28001) Float() float64 {
 	return float64(len(d))
 }
+func (d *DPT_28001) ToByteArray(data string) ([]byte, error) {
+	*d = DPT_28001(data)
+	return d.Pack(), nil
+}

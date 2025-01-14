@@ -1,6 +1,9 @@
 package dpt
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // DPT_5001 represents DPT 5.001 / Scaling.
 type DPT_5001 float32
@@ -35,6 +38,14 @@ func (d DPT_5001) String() string {
 }
 func (d DPT_5001) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_5001) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_5001(result)
+	return d.Pack(), nil
 }
 
 // DPT_5003 represents DPT 5.003 / Angle.
@@ -71,6 +82,14 @@ func (d DPT_5003) String() string {
 func (d DPT_5003) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_5003) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_5003(result)
+	return d.Pack(), nil
+}
 
 // DPT_5004 represents DPT 5.004 / Percent_U8.
 type DPT_5004 uint8
@@ -93,6 +112,14 @@ func (d DPT_5004) String() string {
 func (d DPT_5004) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_5004) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_5004(result)
+	return d.Pack(), nil
+}
 
 // DPT_5005 represents DPT 5.005 / Ratio (0..255).
 type DPT_5005 uint8
@@ -114,4 +141,12 @@ func (d DPT_5005) String() string {
 }
 func (d DPT_5005) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_5005) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_5005(result)
+	return d.Pack(), nil
 }

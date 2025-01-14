@@ -1,5 +1,7 @@
 package dpt
 
+import "strconv"
+
 const (
 	HVACMode_Auto DPT_20102 = iota
 	HVACMode_Comfort
@@ -42,6 +44,14 @@ func (d DPT_20102) String() string {
 
 func (d DPT_20102) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_20102) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_20102(result)
+	return d.Pack(), nil
 }
 
 // DPT_20105 represents DPT 20.105 / HVACContrMode.
@@ -112,4 +122,12 @@ func (d DPT_20105) String() string {
 
 func (d DPT_20105) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_20105) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_20105(result)
+	return d.Pack(), nil
 }

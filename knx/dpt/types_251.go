@@ -2,6 +2,8 @@ package dpt
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 // DPT_251600 represents DPT 251.600 / Colour RGBW - RGBW value 4x(0..100%) / U8 U8 U8 U8 r8 r4B4
@@ -59,4 +61,31 @@ func (d DPT_251600) String() string {
 }
 func (d DPT_251600) Float() float64 {
 	return float64(d.Red) + float64(d.Green) + float64(d.Blue) + float64(d.White)
+}
+func (d *DPT_251600) ToByteArray(data string) ([]byte, error) {
+	split := strings.Split(data, ",")
+	if len(split) != 4 {
+		return nil, ErrInvalidLength
+	}
+	red, err := strconv.Atoi(split[0])
+	if err != nil {
+		return nil, err
+	}
+	d.Red = uint8(red)
+	green, err := strconv.Atoi(split[1])
+	if err != nil {
+		return nil, err
+	}
+	d.Green = uint8(green)
+	blue, err := strconv.Atoi(split[2])
+	if err != nil {
+		return nil, err
+	}
+	d.Blue = uint8(blue)
+	white, err := strconv.Atoi(split[3])
+	if err != nil {
+		return nil, err
+	}
+	d.White = uint8(white)
+	return d.Pack(), nil
 }

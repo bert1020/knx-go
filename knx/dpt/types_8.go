@@ -5,6 +5,7 @@ package dpt
 
 import (
 	"fmt"
+	"strconv"
 )
 
 // DPT_8001 represents DPT 8.001 / Counter.
@@ -28,6 +29,14 @@ func (d DPT_8001) String() string {
 func (d DPT_8001) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_8001) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8001(result)
+	return d.Pack(), nil
+}
 
 // DPT_8002 represents DPT 8.002 / delta time ms.
 type DPT_8002 int16
@@ -49,6 +58,14 @@ func (d DPT_8002) String() string {
 }
 func (d DPT_8002) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_8002) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8002(result)
+	return d.Pack(), nil
 }
 
 // DPT_8003 represents DPT 8.003 / delta time ms (range -327.68 s ... 327.67 s)
@@ -80,6 +97,14 @@ func (d DPT_8003) String() string {
 func (d DPT_8003) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_8003) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8003(result)
+	return d.Pack(), nil
+}
 
 // DPT_8004 represents DPT 8.004 / delta time ms (range -3276.8 s ... 3276.7 s)
 type DPT_8004 float32
@@ -110,6 +135,14 @@ func (d DPT_8004) String() string {
 func (d DPT_8004) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_8004) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8004(result)
+	return d.Pack(), nil
+}
 
 // DPT_8005 represents DPT 8.005 / delta time seconds
 type DPT_8005 int16
@@ -131,6 +164,14 @@ func (d DPT_8005) String() string {
 }
 func (d DPT_8005) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_8005) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8005(result)
+	return d.Pack(), nil
 }
 
 // DPT_8006 represents DPT 8.006 / delta time minutes
@@ -154,6 +195,14 @@ func (d DPT_8006) String() string {
 func (d DPT_8006) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_8006) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8006(result)
+	return d.Pack(), nil
+}
 
 // DPT_8007 represents DPT 8.007 / delta time hours
 type DPT_8007 int16
@@ -175,6 +224,14 @@ func (d DPT_8007) String() string {
 }
 func (d DPT_8007) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_8007) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8007(result)
+	return d.Pack(), nil
 }
 
 // DPT_8010 represents DPT 8.010 / percentage difference
@@ -206,6 +263,14 @@ func (d DPT_8010) String() string {
 func (d DPT_8010) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_8010) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8010(result)
+	return d.Pack(), nil
+}
 
 // DPT_8011 represents DPT 8.011 / Rotation angle °.
 type DPT_8011 int16
@@ -227,4 +292,12 @@ func (d DPT_8011) String() string {
 }
 func (d DPT_8011) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_8011) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_8011(result)
+	return d.Pack(), nil
 }

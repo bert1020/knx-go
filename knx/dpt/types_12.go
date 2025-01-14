@@ -1,6 +1,9 @@
 package dpt
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // DPT_12001 represents DPT 12.001 / Unsigned counter.
 type DPT_12001 uint32
@@ -22,4 +25,12 @@ func (d DPT_12001) String() string {
 }
 func (d DPT_12001) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_12001) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_12001(float32(result))
+	return d.Pack(), nil
 }

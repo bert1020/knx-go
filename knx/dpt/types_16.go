@@ -65,6 +65,10 @@ func (d DPT_16000) String() string {
 func (d DPT_16000) Float() float64 {
 	return float64(len(d))
 }
+func (d *DPT_16000) ToByteArray(data string) ([]byte, error) {
+	*d = DPT_16000(data)
+	return d.Pack(), nil
+}
 
 // DPT_16001 represents DPT 16.001 / String 8859-1.
 // The string must be ISO-8859-1 and contain at most 14 chars.
@@ -123,4 +127,8 @@ func (d DPT_16001) String() string {
 }
 func (d DPT_16001) Float() float64 {
 	return float64(len(d))
+}
+func (d *DPT_16001) ToByteArray(data string) ([]byte, error) {
+	*d = DPT_16001(data)
+	return d.Pack(), nil
 }

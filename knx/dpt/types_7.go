@@ -5,6 +5,7 @@ package dpt
 
 import (
 	"fmt"
+	"strconv"
 )
 
 // DPT_7001 represents DPT 7.001 / Value 2 Ucount.
@@ -28,6 +29,14 @@ func (d DPT_7001) String() string {
 func (d DPT_7001) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_7001) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7001(result)
+	return d.Pack(), nil
+}
 
 // DPT_7002 represents DPT 7.002 / Time Period MSec.
 type DPT_7002 uint16
@@ -49,6 +58,14 @@ func (d DPT_7002) String() string {
 }
 func (d DPT_7002) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_7002) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7002(result)
+	return d.Pack(), nil
 }
 
 // DPT_7003 represents DPT 7.003 / Time Period 10 MSec.
@@ -72,6 +89,14 @@ func (d DPT_7003) String() string {
 func (d DPT_7003) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_7003) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7003(result)
+	return d.Pack(), nil
+}
 
 // DPT_7004 represents DPT 7.004 / Time Period 100 MSec.
 type DPT_7004 uint16
@@ -93,6 +118,14 @@ func (d DPT_7004) String() string {
 }
 func (d DPT_7004) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_7004) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7004(result)
+	return d.Pack(), nil
 }
 
 // DPT_7005 represents DPT 7.005 / Time Period Sec.
@@ -116,6 +149,14 @@ func (d DPT_7005) String() string {
 func (d DPT_7005) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_7005) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7005(result)
+	return d.Pack(), nil
+}
 
 // DPT_7006 represents DPT 7.006 / Time Period Min.
 type DPT_7006 uint16
@@ -137,6 +178,14 @@ func (d DPT_7006) String() string {
 }
 func (d DPT_7006) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_7006) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7006(result)
+	return d.Pack(), nil
 }
 
 // DPT_7007 represents DPT 7.007 / Time Period Hrs.
@@ -160,6 +209,14 @@ func (d DPT_7007) String() string {
 func (d DPT_7007) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_7007) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7007(result)
+	return d.Pack(), nil
+}
 
 // DPT_7010 represents DPT 7.010 / Property DataType.
 type DPT_7010 uint16
@@ -181,6 +238,14 @@ func (d DPT_7010) String() string {
 }
 func (d DPT_7010) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_7010) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7010(result)
+	return d.Pack(), nil
 }
 
 // DPT_7011 represents DPT 7.011 / Length mm.
@@ -204,6 +269,14 @@ func (d DPT_7011) String() string {
 func (d DPT_7011) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_7011) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7011(result)
+	return d.Pack(), nil
+}
 
 // DPT_7012 represents DPT 7.012 / Current mA.
 type DPT_7012 uint16
@@ -225,6 +298,14 @@ func (d DPT_7012) String() string {
 }
 func (d DPT_7012) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_7012) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7012(result)
+	return d.Pack(), nil
 }
 
 // DPT_7013 represents DPT 7.013 / Brightness lux.
@@ -248,6 +329,14 @@ func (d DPT_7013) String() string {
 func (d DPT_7013) Float() float64 {
 	return float64(d)
 }
+func (d *DPT_7013) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7013(result)
+	return d.Pack(), nil
+}
 
 // DPT_7600 represents DPT 7.600 / Absolute Colour Temperature K.
 type DPT_7600 uint16
@@ -269,4 +358,12 @@ func (d DPT_7600) String() string {
 }
 func (d DPT_7600) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_7600) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_7600(result)
+	return d.Pack(), nil
 }

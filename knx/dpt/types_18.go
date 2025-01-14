@@ -1,6 +1,9 @@
 package dpt
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // DPT_18001 represents DPT 18.001 / Scene Control.
 type DPT_18001 uint8
@@ -40,4 +43,12 @@ func (d DPT_18001) String() string {
 }
 func (d DPT_18001) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_18001) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.Atoi(data)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_18001(result)
+	return d.Pack(), nil
 }

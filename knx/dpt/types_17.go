@@ -1,6 +1,9 @@
 package dpt
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // DPT_17001 represents DPT 17.001 / Scene Number.
 type DPT_17001 uint8
@@ -38,4 +41,12 @@ func (d DPT_17001) String() string {
 }
 func (d DPT_17001) Float() float64 {
 	return float64(d)
+}
+func (d *DPT_17001) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_17001(float32(result))
+	return d.Pack(), nil
 }

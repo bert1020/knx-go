@@ -96,15 +96,17 @@ func TestDPT_1002(t *testing.T) {
 	}
 }
 func TestDPT_1001_Float(t *testing.T) {
-	//dpt1001 := DPT_1001(true)
-	//fmt.Println(dpt1001.Float())
-	d, _ := Produce("1.001")
-	err := d.Unpack([]byte{1})
+	d, _ := Produce("9.001")
+	array, err := d.ToByteArray("25.5")
 	if err != nil {
-		return
-	}
-	fmt.Println(d.Float())
+		t.Error(err)
 
+	}
+	err = d.Unpack(array)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(d.String())
 }
 
 // Test DPT 1.003 (Enable) with values within range

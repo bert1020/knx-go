@@ -3,6 +3,8 @@ package dpt
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 // DPT_242600 represents DPT 242.600 (DPT_Colour_xyY)
@@ -79,4 +81,28 @@ func (d DPT_242600) String() string {
 }
 func (d DPT_242600) Float() float64 {
 	return float64(d.X) + float64(d.Y) + float64(d.YBrightness)
+}
+func (d *DPT_242600) ToByteArray(data string) ([]byte, error) {
+	split := strings.Split(data, ",")
+	if len(split) != 5 {
+		return nil, ErrInvalidLength
+	}
+	x, err := strconv.Atoi(split[0])
+	if err != nil {
+		return nil, err
+	}
+	d.X = uint16(x)
+	y, err := strconv.Atoi(split[1])
+	if err != nil {
+		return nil, err
+	}
+	d.Y = uint16(y)
+	YBrightness, err := strconv.Atoi(split[2])
+	if err != nil {
+		return nil, err
+	}
+	d.YBrightness = uint8(YBrightness)
+	d.ColorValid = split[3] == "1" || strings.ToLower(split[3]) == "true"
+	d.BrightnessValid = split[4] == "1" || strings.ToLower(split[4]) == "true"
+	return d.Pack(), nil
 }
