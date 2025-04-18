@@ -1,6 +1,7 @@
 package dpt
 
 import (
+	"log"
 	"math"
 	"math/rand"
 	"testing"
@@ -79,4 +80,8 @@ func TestDPT_5005(t *testing.T) {
 	assert.Equal(t, knxValue, dptValue.Pack())
 
 	assert.Equal(t, "42", dptValue.String())
+}
+
+func TestString(t *testing.T) {
+	log.Printf("%.2f", 25.568)
 }

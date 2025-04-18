@@ -24,7 +24,7 @@ func (d DPT_8001) Unit() string {
 }
 
 func (d DPT_8001) String() string {
-	return fmt.Sprintf("%d pulses", int16(d))
+	return fmt.Sprintf("%d", int16(d))
 }
 func (d DPT_8001) Float() float64 {
 	return float64(d)
@@ -54,7 +54,7 @@ func (d DPT_8002) Unit() string {
 }
 
 func (d DPT_8002) String() string {
-	return fmt.Sprintf("%d ms", int16(d))
+	return fmt.Sprintf("%d", int16(d))
 }
 func (d DPT_8002) Float() float64 {
 	return float64(d)
@@ -92,7 +92,7 @@ func (d DPT_8003) Unit() string {
 }
 
 func (d DPT_8003) String() string {
-	return fmt.Sprintf("%f ms", d)
+	return fmt.Sprintf("%f", d)
 }
 func (d DPT_8003) Float() float64 {
 	return float64(d)
@@ -130,7 +130,7 @@ func (d DPT_8004) Unit() string {
 }
 
 func (d DPT_8004) String() string {
-	return fmt.Sprintf("%f ms", d)
+	return fmt.Sprintf("%f", d)
 }
 func (d DPT_8004) Float() float64 {
 	return float64(d)
@@ -160,7 +160,7 @@ func (d DPT_8005) Unit() string {
 }
 
 func (d DPT_8005) String() string {
-	return fmt.Sprintf("%d s", int16(d))
+	return fmt.Sprintf("%d", int16(d))
 }
 func (d DPT_8005) Float() float64 {
 	return float64(d)
@@ -190,7 +190,7 @@ func (d DPT_8006) Unit() string {
 }
 
 func (d DPT_8006) String() string {
-	return fmt.Sprintf("%d min", int16(d))
+	return fmt.Sprintf("%d", int16(d))
 }
 func (d DPT_8006) Float() float64 {
 	return float64(d)
@@ -220,7 +220,7 @@ func (d DPT_8007) Unit() string {
 }
 
 func (d DPT_8007) String() string {
-	return fmt.Sprintf("%d h", int16(d))
+	return fmt.Sprintf("%d", int16(d))
 }
 func (d DPT_8007) Float() float64 {
 	return float64(d)
@@ -258,7 +258,7 @@ func (d DPT_8010) Unit() string {
 }
 
 func (d DPT_8010) String() string {
-	return fmt.Sprintf("%f %%", d)
+	return fmt.Sprintf("%f", d)
 }
 func (d DPT_8010) Float() float64 {
 	return float64(d)
@@ -288,7 +288,7 @@ func (d DPT_8011) Unit() string {
 }
 
 func (d DPT_8011) String() string {
-	return fmt.Sprintf("%d °", int16(d))
+	return fmt.Sprintf("%d", int16(d))
 }
 func (d DPT_8011) Float() float64 {
 	return float64(d)

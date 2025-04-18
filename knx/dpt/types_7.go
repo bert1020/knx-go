@@ -24,7 +24,7 @@ func (d DPT_7001) Unit() string {
 }
 
 func (d DPT_7001) String() string {
-	return fmt.Sprintf("%d pulses", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7001) Float() float64 {
 	return float64(d)
@@ -54,7 +54,7 @@ func (d DPT_7002) Unit() string {
 }
 
 func (d DPT_7002) String() string {
-	return fmt.Sprintf("%d ms", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7002) Float() float64 {
 	return float64(d)
@@ -84,7 +84,7 @@ func (d DPT_7003) Unit() string {
 }
 
 func (d DPT_7003) String() string {
-	return fmt.Sprintf("%d s", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7003) Float() float64 {
 	return float64(d)
@@ -114,7 +114,7 @@ func (d DPT_7004) Unit() string {
 }
 
 func (d DPT_7004) String() string {
-	return fmt.Sprintf("%d s", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7004) Float() float64 {
 	return float64(d)
@@ -144,7 +144,7 @@ func (d DPT_7005) Unit() string {
 }
 
 func (d DPT_7005) String() string {
-	return fmt.Sprintf("%d s", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7005) Float() float64 {
 	return float64(d)
@@ -174,7 +174,7 @@ func (d DPT_7006) Unit() string {
 }
 
 func (d DPT_7006) String() string {
-	return fmt.Sprintf("%d m", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7006) Float() float64 {
 	return float64(d)
@@ -204,7 +204,7 @@ func (d DPT_7007) Unit() string {
 }
 
 func (d DPT_7007) String() string {
-	return fmt.Sprintf("%d h", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7007) Float() float64 {
 	return float64(d)
@@ -264,7 +264,7 @@ func (d DPT_7011) Unit() string {
 }
 
 func (d DPT_7011) String() string {
-	return fmt.Sprintf("%d mm", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7011) Float() float64 {
 	return float64(d)
@@ -294,7 +294,7 @@ func (d DPT_7012) Unit() string {
 }
 
 func (d DPT_7012) String() string {
-	return fmt.Sprintf("%d mA", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7012) Float() float64 {
 	return float64(d)
@@ -324,7 +324,7 @@ func (d DPT_7013) Unit() string {
 }
 
 func (d DPT_7013) String() string {
-	return fmt.Sprintf("%d lux", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7013) Float() float64 {
 	return float64(d)
@@ -354,7 +354,7 @@ func (d DPT_7600) Unit() string {
 }
 
 func (d DPT_7600) String() string {
-	return fmt.Sprintf("%d K", uint16(d))
+	return fmt.Sprintf("%d", uint16(d))
 }
 func (d DPT_7600) Float() float64 {
 	return float64(d)

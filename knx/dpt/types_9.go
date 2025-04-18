@@ -41,7 +41,7 @@ func (d DPT_9001) Unit() string {
 }
 
 func (d DPT_9001) String() string {
-	return fmt.Sprintf("%.2f °C", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9001) Float() float64 {
 	return float64(d)
@@ -88,7 +88,7 @@ func (d DPT_9002) Unit() string {
 }
 
 func (d DPT_9002) String() string {
-	return fmt.Sprintf("%.2f K", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9002) Float() float64 {
 	return float64(d)
@@ -135,7 +135,7 @@ func (d DPT_9003) Unit() string {
 }
 
 func (d DPT_9003) String() string {
-	return fmt.Sprintf("%.2f K/h", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9003) Float() float64 {
 	return float64(d)
@@ -182,7 +182,7 @@ func (d DPT_9004) Unit() string {
 }
 
 func (d DPT_9004) String() string {
-	return fmt.Sprintf("%.2f lux", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9004) Float() float64 {
 	return float64(d)
@@ -230,7 +230,7 @@ func (d DPT_9005) Unit() string {
 }
 
 func (d DPT_9005) String() string {
-	return fmt.Sprintf("%.2f m/s", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9005) Float() float64 {
 	return float64(d)
@@ -278,7 +278,7 @@ func (d DPT_9006) Unit() string {
 }
 
 func (d DPT_9006) String() string {
-	return fmt.Sprintf("%.2f Pa", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9006) Float() float64 {
 	return float64(d)
@@ -326,7 +326,7 @@ func (d DPT_9007) Unit() string {
 }
 
 func (d DPT_9007) String() string {
-	return fmt.Sprintf("%.2f %%", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9007) Float() float64 {
 	return float64(d)
@@ -375,7 +375,7 @@ func (d DPT_9008) Unit() string {
 }
 
 func (d DPT_9008) String() string {
-	return fmt.Sprintf("%.2f ppm", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9008) Float() float64 {
 	return float64(d)
@@ -422,7 +422,7 @@ func (d DPT_9010) Unit() string {
 }
 
 func (d DPT_9010) String() string {
-	return fmt.Sprintf("%.2f s", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9010) Float() float64 {
 	return float64(d)
@@ -469,7 +469,7 @@ func (d DPT_9011) Unit() string {
 }
 
 func (d DPT_9011) String() string {
-	return fmt.Sprintf("%.2f ms", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9011) Float() float64 {
 	return float64(d)
@@ -516,7 +516,7 @@ func (d DPT_9020) Unit() string {
 }
 
 func (d DPT_9020) String() string {
-	return fmt.Sprintf("%.2f mV", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9020) Float() float64 {
 	return float64(d)
@@ -563,7 +563,7 @@ func (d DPT_9021) Unit() string {
 }
 
 func (d DPT_9021) String() string {
-	return fmt.Sprintf("%.2f mA", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9021) Float() float64 {
 	return float64(d)
@@ -610,7 +610,7 @@ func (d DPT_9022) Unit() string {
 }
 
 func (d DPT_9022) String() string {
-	return fmt.Sprintf("%.2f W/m2", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9022) Float() float64 {
 	return float64(d)
@@ -657,7 +657,7 @@ func (d DPT_9023) Unit() string {
 }
 
 func (d DPT_9023) String() string {
-	return fmt.Sprintf("%.2f K/%%", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9023) Float() float64 {
 	return float64(d)
@@ -704,7 +704,7 @@ func (d DPT_9024) Unit() string {
 }
 
 func (d DPT_9024) String() string {
-	return fmt.Sprintf("%.2f kW", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9024) Float() float64 {
 	return float64(d)
@@ -751,7 +751,7 @@ func (d DPT_9025) Unit() string {
 }
 
 func (d DPT_9025) String() string {
-	return fmt.Sprintf("%.2f l/h", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9025) Float() float64 {
 	return float64(d)
@@ -798,7 +798,7 @@ func (d DPT_9026) Unit() string {
 }
 
 func (d DPT_9026) String() string {
-	return fmt.Sprintf("%.2f l/m^2", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9026) Float() float64 {
 	return float64(d)
@@ -845,7 +845,7 @@ func (d DPT_9027) Unit() string {
 }
 
 func (d DPT_9027) String() string {
-	return fmt.Sprintf("%.2f °F", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9027) Float() float64 {
 	return float64(d)
@@ -892,7 +892,7 @@ func (d DPT_9028) Unit() string {
 }
 
 func (d DPT_9028) String() string {
-	return fmt.Sprintf("%.2f km/h", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9028) Float() float64 {
 	return float64(d)
@@ -939,7 +939,7 @@ func (d DPT_9029) Unit() string {
 }
 
 func (d DPT_9029) String() string {
-	return fmt.Sprintf("%.2f g/m³", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_9029) Float() float64 {
 	return float64(d)

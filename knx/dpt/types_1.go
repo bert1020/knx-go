@@ -3,6 +3,8 @@
 
 package dpt
 
+import "strings"
+
 // DPT_1001 represents DPT 1.001 (G) / DPT_Switch.
 type DPT_1001 bool
 
@@ -34,7 +36,7 @@ func (d DPT_1001) Float() float64 {
 }
 
 func (d *DPT_1001) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "On"
+	*d = strings.Split(data, ".")[0] == "1" || data == "On"
 	return d.Pack(), nil
 }
 
@@ -69,7 +71,7 @@ func (d DPT_1002) Float() float64 {
 	}
 }
 func (d *DPT_1002) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "On"
+	*d = strings.Split(data, ".")[0] == "1" || data == "On"
 	return d.Pack(), nil
 }
 
@@ -103,7 +105,7 @@ func (d DPT_1003) Float() float64 {
 	}
 }
 func (d *DPT_1003) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Enable"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Enable"
 	return d.Pack(), nil
 }
 
@@ -137,7 +139,7 @@ func (d DPT_1004) Float() float64 {
 	}
 }
 func (d *DPT_1004) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Ramp"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Ramp"
 	return d.Pack(), nil
 }
 
@@ -171,7 +173,7 @@ func (d DPT_1005) Float() float64 {
 	}
 }
 func (d *DPT_1005) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Alarm"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Alarm"
 	return d.Pack(), nil
 }
 
@@ -205,7 +207,7 @@ func (d DPT_1006) Float() float64 {
 	}
 }
 func (d *DPT_1006) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "High"
+	*d = strings.Split(data, ".")[0] == "1" || data == "High"
 	return d.Pack(), nil
 }
 
@@ -239,7 +241,7 @@ func (d DPT_1007) Float() float64 {
 	}
 }
 func (d *DPT_1007) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Increase"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Increase"
 	return d.Pack(), nil
 }
 
@@ -273,7 +275,7 @@ func (d DPT_1008) Float() float64 {
 	}
 }
 func (d *DPT_1008) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Down"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Down"
 	return d.Pack(), nil
 }
 
@@ -307,7 +309,7 @@ func (d DPT_1009) Float() float64 {
 	}
 }
 func (d *DPT_1009) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Close"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Close"
 	return d.Pack(), nil
 }
 
@@ -341,7 +343,7 @@ func (d DPT_1010) Float() float64 {
 	}
 }
 func (d *DPT_1010) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Start"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Start"
 	return d.Pack(), nil
 }
 
@@ -375,7 +377,7 @@ func (d DPT_1011) Float() float64 {
 	}
 }
 func (d *DPT_1011) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Active"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Active"
 	return d.Pack(), nil
 }
 
@@ -409,7 +411,7 @@ func (d DPT_1012) Float() float64 {
 	}
 }
 func (d *DPT_1012) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Inverted"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Inverted"
 	return d.Pack(), nil
 }
 
@@ -443,7 +445,7 @@ func (d DPT_1013) Float() float64 {
 	}
 }
 func (d *DPT_1013) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Cyclically"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Cyclically"
 	return d.Pack(), nil
 }
 
@@ -477,7 +479,7 @@ func (d DPT_1014) Float() float64 {
 	}
 }
 func (d *DPT_1014) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "Calculated"
+	*d = strings.Split(data, ".")[0] == "1" || data == "Calculated"
 	return d.Pack(), nil
 }
 
@@ -511,7 +513,7 @@ func (d DPT_1015) Float() float64 {
 	}
 }
 func (d *DPT_1015) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "reset command"
+	*d = strings.Split(data, ".")[0] == "1" || data == "reset command"
 	return d.Pack(), nil
 }
 
@@ -545,7 +547,7 @@ func (d DPT_1016) Float() float64 {
 	}
 }
 func (d *DPT_1016) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "acknowledge command"
+	*d = strings.Split(data, ".")[0] == "1" || data == "acknowledge command"
 	return d.Pack(), nil
 }
 
@@ -579,7 +581,7 @@ func (d DPT_1017) Float() float64 {
 	}
 }
 func (d *DPT_1017) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "trigger"
+	*d = strings.Split(data, ".")[0] == "1" || data == "trigger"
 	return d.Pack(), nil
 }
 
@@ -613,7 +615,7 @@ func (d DPT_1018) Float() float64 {
 	}
 }
 func (d *DPT_1018) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "occupied"
+	*d = strings.Split(data, ".")[0] == "1" || data == "occupied"
 	return d.Pack(), nil
 }
 
@@ -647,7 +649,7 @@ func (d DPT_1019) Float() float64 {
 	}
 }
 func (d *DPT_1019) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "open"
+	*d = strings.Split(data, ".")[0] == "1" || data == "open"
 	return d.Pack(), nil
 }
 
@@ -681,7 +683,7 @@ func (d DPT_1021) Float() float64 {
 	}
 }
 func (d *DPT_1021) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "AND"
+	*d = strings.Split(data, ".")[0] == "1" || data == "AND"
 	return d.Pack(), nil
 }
 
@@ -716,7 +718,7 @@ func (d DPT_1022) Float() float64 {
 }
 
 func (d *DPT_1022) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1" || data == "scene B"
+	*d = strings.Split(data, ".")[0] == "1" || data == "scene B"
 	return d.Pack(), nil
 }
 
@@ -750,7 +752,7 @@ func (d DPT_1023) Float() float64 {
 	}
 }
 func (d *DPT_1023) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1"
+	*d = strings.Split(data, ".")[0] == "1"
 	return d.Pack(), nil
 }
 
@@ -785,7 +787,7 @@ func (d DPT_1024) Float() float64 {
 }
 
 func (d *DPT_1024) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1"
+	*d = strings.Split(data, ".")[0] == "1"
 	return d.Pack(), nil
 }
 
@@ -819,6 +821,6 @@ func (d DPT_1100) Float() float64 {
 	}
 }
 func (d *DPT_1100) ToByteArray(data string) ([]byte, error) {
-	*d = data == "1"
+	*d = strings.Split(data, ".")[0] == "1"
 	return d.Pack(), nil
 }

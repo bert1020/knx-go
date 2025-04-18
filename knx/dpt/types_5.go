@@ -34,7 +34,7 @@ func (d DPT_5001) Unit() string {
 }
 
 func (d DPT_5001) String() string {
-	return fmt.Sprintf("%.2f%%", float32(d))
+	return fmt.Sprintf("%.2f", float32(d))
 }
 func (d DPT_5001) Float() float64 {
 	return float64(d)

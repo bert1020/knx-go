@@ -24,9 +24,9 @@ func (d *DPT_232600) Unpack(data []byte) error {
 		return ErrInvalidLength
 	}
 
-	d.Red = uint8(data[1])
-	d.Green = uint8(data[2])
-	d.Blue = uint8(data[3])
+	d.Red = data[1]
+	d.Green = data[2]
+	d.Blue = data[3]
 
 	return nil
 }
@@ -36,7 +36,7 @@ func (d DPT_232600) Unit() string {
 }
 
 func (d DPT_232600) String() string {
-	return fmt.Sprintf("#%02X%02X%02X", d.Red, d.Green, d.Blue)
+	return fmt.Sprintf("%d,%d,%d", d.Red, d.Green, d.Blue)
 }
 func (d DPT_232600) Float() float64 {
 	return float64(d.Red) + float64(d.Green) + float64(d.Blue)
