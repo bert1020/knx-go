@@ -551,6 +551,7 @@ func (conn *Tunnel) serve() {
 	defer conn.wait.Done()
 
 	for {
+		util.Log(conn, "")
 		err := conn.process()
 
 		if err != nil {
@@ -558,20 +559,34 @@ func (conn *Tunnel) serve() {
 		}
 
 		// Check if we can try again.
-		if err == errDisconnected || err == errHeartbeatFailed {
+		if errors.Is(err, errDisconnected) || errors.Is(err, errHeartbeatFailed) {
 			util.Log(conn, "Attempting reconnect")
 
-			reconnErr := conn.requestConn()
+			//reconnErr := conn.requestConn()
+			//
+			//if reconnErr == nil {
+			//	util.Log(conn, "Reconnect succeeded")
+			//	continue
+			//}
 
-			if reconnErr == nil {
-				util.Log(conn, "Reconnect succeeded")
-				continue
-			}
-
-			util.Log(conn, "Reconnect failed: %v", reconnErr)
+			//util.Log(conn, "Reconnect failed: %v", reconnErr)
+			reConn(conn)
+			continue
 		}
 
 		return
+	}
+}
+func reConn(conn *Tunnel) {
+	reconnErr := conn.requestConn()
+
+	if reconnErr == nil {
+		util.Log(conn, "Reconnect succeeded")
+		return
+	} else {
+		util.Log(conn, "Reconnect failed: %v", reconnErr)
+		time.Sleep(conn.config.HeartbeatInterval)
+		reConn(conn)
 	}
 }
 
