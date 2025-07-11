@@ -90,7 +90,7 @@ func unpackB4(data byte, b0 *bool, b1 *bool, b2 *bool, b3 *bool) error {
 	return nil
 }
 
-func packF16(f float32) []byte {
+func packF16(f float64) []byte {
 	buffer := []byte{0, 0, 0}
 
 	if f > 670760.96 {
@@ -122,7 +122,7 @@ func packF16(f float32) []byte {
 	return buffer
 }
 
-func unpackF16(data []byte, f *float32) error {
+func unpackF16(data []byte, f *float64) error {
 	if len(data) != 3 {
 		return ErrInvalidLength
 	}
@@ -134,7 +134,7 @@ func unpackF16(data []byte, f *float32) error {
 
 	e := (data[1] >> 3) & 15
 
-	*f = 0.01 * float32(m) * float32(uint(1)<<e)
+	*f = 0.01 * float64(m) * float64(uint(1)<<e)
 	return nil
 }
 

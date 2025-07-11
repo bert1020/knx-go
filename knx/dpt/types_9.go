@@ -9,7 +9,7 @@ import (
 )
 
 // DPT_9001 represents DPT 9.001 / Temperature °C.
-type DPT_9001 float32
+type DPT_9001 float64
 
 func (d DPT_9001) Pack() []byte {
 	if d <= -273 {
@@ -17,12 +17,12 @@ func (d DPT_9001) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9001) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func (d DPT_9001) Unit() string {
 }
 
 func (d DPT_9001) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9001) Float() float64 {
 	return float64(d)
@@ -51,12 +51,12 @@ func (d *DPT_9001) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9001(float32(result))
+	*d = DPT_9001(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9002 represents DPT 9.002 / Temperature K.
-type DPT_9002 float32
+type DPT_9002 float64
 
 func (d DPT_9002) Pack() []byte {
 	if d <= -670760 {
@@ -64,12 +64,12 @@ func (d DPT_9002) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9002) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func (d DPT_9002) Unit() string {
 }
 
 func (d DPT_9002) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9002) Float() float64 {
 	return float64(d)
@@ -98,12 +98,12 @@ func (d *DPT_9002) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9002(float32(result))
+	*d = DPT_9002(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9003 represents DPT 9.003 / Temperature K/h.
-type DPT_9003 float32
+type DPT_9003 float64
 
 func (d DPT_9003) Pack() []byte {
 	if d <= -670760 {
@@ -111,12 +111,12 @@ func (d DPT_9003) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9003) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -135,7 +135,7 @@ func (d DPT_9003) Unit() string {
 }
 
 func (d DPT_9003) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9003) Float() float64 {
 	return float64(d)
@@ -145,12 +145,12 @@ func (d *DPT_9003) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9003(float32(result))
+	*d = DPT_9003(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9004 represents DPT 9.004 / Illumination lux.
-type DPT_9004 float32
+type DPT_9004 float64
 
 func (d DPT_9004) Pack() []byte {
 	if d <= 0 {
@@ -158,12 +158,12 @@ func (d DPT_9004) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9004) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -182,7 +182,7 @@ func (d DPT_9004) Unit() string {
 }
 
 func (d DPT_9004) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9004) Float() float64 {
 	return float64(d)
@@ -192,12 +192,12 @@ func (d *DPT_9004) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9004(float32(result))
+	*d = DPT_9004(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9005 represents DPT 9.005 / Wind Speed m/s.
-type DPT_9005 float32
+type DPT_9005 float64
 
 func (d DPT_9005) Pack() []byte {
 	if d <= 0 {
@@ -205,12 +205,12 @@ func (d DPT_9005) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9005) Unpack(data []byte) error {
-	var value float32
+	var value float64
 
 	if err := unpackF16(data, &value); err != nil {
 		return err
@@ -230,7 +230,7 @@ func (d DPT_9005) Unit() string {
 }
 
 func (d DPT_9005) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9005) Float() float64 {
 	return float64(d)
@@ -240,12 +240,12 @@ func (d *DPT_9005) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9005(float32(result))
+	*d = DPT_9005(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9006 represents DPT 9.006 / Pressure Pa.
-type DPT_9006 float32
+type DPT_9006 float64
 
 func (d DPT_9006) Pack() []byte {
 	if d <= 0 {
@@ -253,12 +253,12 @@ func (d DPT_9006) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9006) Unpack(data []byte) error {
-	var value float32
+	var value float64
 
 	if err := unpackF16(data, &value); err != nil {
 		return err
@@ -278,7 +278,7 @@ func (d DPT_9006) Unit() string {
 }
 
 func (d DPT_9006) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9006) Float() float64 {
 	return float64(d)
@@ -288,12 +288,12 @@ func (d *DPT_9006) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9006(float32(result))
+	*d = DPT_9006(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9007 represents DPT 9.007 / Humidity %
-type DPT_9007 float32
+type DPT_9007 float64
 
 func (d DPT_9007) Pack() []byte {
 	if d <= 0 {
@@ -301,12 +301,12 @@ func (d DPT_9007) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9007) Unpack(data []byte) error {
-	var value float32
+	var value float64
 
 	if err := unpackF16(data, &value); err != nil {
 		return err
@@ -326,7 +326,7 @@ func (d DPT_9007) Unit() string {
 }
 
 func (d DPT_9007) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9007) Float() float64 {
 	return float64(d)
@@ -336,12 +336,12 @@ func (d *DPT_9007) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9007(float32(result))
+	*d = DPT_9007(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9008 represents DPT 9.008 / Air quality ppm
-type DPT_9008 float32
+type DPT_9008 float64
 
 func (d DPT_9008) Pack() []byte {
 	if d <= 0 {
@@ -349,12 +349,12 @@ func (d DPT_9008) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9008) Unpack(data []byte) error {
-	var value float32
+	var value float64
 
 	if err := unpackF16(data, &value); err != nil {
 		return err
@@ -375,7 +375,7 @@ func (d DPT_9008) Unit() string {
 }
 
 func (d DPT_9008) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9008) Float() float64 {
 	return float64(d)
@@ -385,12 +385,12 @@ func (d *DPT_9008) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9008(float32(result))
+	*d = DPT_9008(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9010 represents DPT 9.010 / Time s.
-type DPT_9010 float32
+type DPT_9010 float64
 
 func (d DPT_9010) Pack() []byte {
 	if d <= -670760 {
@@ -398,12 +398,12 @@ func (d DPT_9010) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9010) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -422,7 +422,7 @@ func (d DPT_9010) Unit() string {
 }
 
 func (d DPT_9010) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9010) Float() float64 {
 	return float64(d)
@@ -432,12 +432,12 @@ func (d *DPT_9010) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9010(float32(result))
+	*d = DPT_9010(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9011 represents DPT 9.011 / Time ms.
-type DPT_9011 float32
+type DPT_9011 float64
 
 func (d DPT_9011) Pack() []byte {
 	if d <= -670760 {
@@ -445,12 +445,12 @@ func (d DPT_9011) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9011) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -469,7 +469,7 @@ func (d DPT_9011) Unit() string {
 }
 
 func (d DPT_9011) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9011) Float() float64 {
 	return float64(d)
@@ -479,12 +479,12 @@ func (d *DPT_9011) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9011(float32(result))
+	*d = DPT_9011(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9020 represents DPT 9.020 / Volt mV.
-type DPT_9020 float32
+type DPT_9020 float64
 
 func (d DPT_9020) Pack() []byte {
 	if d <= -670760 {
@@ -492,12 +492,12 @@ func (d DPT_9020) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9020) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -516,7 +516,7 @@ func (d DPT_9020) Unit() string {
 }
 
 func (d DPT_9020) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9020) Float() float64 {
 	return float64(d)
@@ -526,12 +526,12 @@ func (d *DPT_9020) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9020(float32(result))
+	*d = DPT_9020(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9021 represents DPT 9.021 / Current mA.
-type DPT_9021 float32
+type DPT_9021 float64
 
 func (d DPT_9021) Pack() []byte {
 	if d <= -670760 {
@@ -539,12 +539,12 @@ func (d DPT_9021) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9021) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -563,7 +563,7 @@ func (d DPT_9021) Unit() string {
 }
 
 func (d DPT_9021) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9021) Float() float64 {
 	return float64(d)
@@ -573,12 +573,12 @@ func (d *DPT_9021) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9021(float32(result))
+	*d = DPT_9021(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9022 represents DPT 9.022 / Power Density W/m2.
-type DPT_9022 float32
+type DPT_9022 float64
 
 func (d DPT_9022) Pack() []byte {
 	if d <= -670760 {
@@ -586,12 +586,12 @@ func (d DPT_9022) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9022) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -610,7 +610,7 @@ func (d DPT_9022) Unit() string {
 }
 
 func (d DPT_9022) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9022) Float() float64 {
 	return float64(d)
@@ -620,12 +620,12 @@ func (d *DPT_9022) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9022(float32(result))
+	*d = DPT_9022(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9023 represents DPT 9.023 / Kelvin per Percent K/%.
-type DPT_9023 float32
+type DPT_9023 float64
 
 func (d DPT_9023) Pack() []byte {
 	if d <= -670760 {
@@ -633,12 +633,12 @@ func (d DPT_9023) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9023) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -657,7 +657,7 @@ func (d DPT_9023) Unit() string {
 }
 
 func (d DPT_9023) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9023) Float() float64 {
 	return float64(d)
@@ -667,12 +667,12 @@ func (d *DPT_9023) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9023(float32(result))
+	*d = DPT_9023(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9024 represents DPT 9.024 / Power kW.
-type DPT_9024 float32
+type DPT_9024 float64
 
 func (d DPT_9024) Pack() []byte {
 	if d <= -670760 {
@@ -680,12 +680,12 @@ func (d DPT_9024) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9024) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -704,7 +704,7 @@ func (d DPT_9024) Unit() string {
 }
 
 func (d DPT_9024) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9024) Float() float64 {
 	return float64(d)
@@ -714,12 +714,12 @@ func (d *DPT_9024) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9024(float32(result))
+	*d = DPT_9024(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9025 represents DPT 9.025 / Volume Flow l/h.
-type DPT_9025 float32
+type DPT_9025 float64
 
 func (d DPT_9025) Pack() []byte {
 	if d <= -670760 {
@@ -727,12 +727,12 @@ func (d DPT_9025) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9025) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -751,7 +751,7 @@ func (d DPT_9025) Unit() string {
 }
 
 func (d DPT_9025) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9025) Float() float64 {
 	return float64(d)
@@ -761,12 +761,12 @@ func (d *DPT_9025) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9025(float32(result))
+	*d = DPT_9025(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9026 represents DPT 9.026 / Rain amount l/m^2.
-type DPT_9026 float32
+type DPT_9026 float64
 
 func (d DPT_9026) Pack() []byte {
 	if d <= -670760 {
@@ -774,12 +774,12 @@ func (d DPT_9026) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9026) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -798,7 +798,7 @@ func (d DPT_9026) Unit() string {
 }
 
 func (d DPT_9026) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9026) Float() float64 {
 	return float64(d)
@@ -808,12 +808,12 @@ func (d *DPT_9026) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9026(float32(result))
+	*d = DPT_9026(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9027 represents DPT 9.027 / Temperature °F.
-type DPT_9027 float32
+type DPT_9027 float64
 
 func (d DPT_9027) Pack() []byte {
 	if d <= -459.6 {
@@ -821,12 +821,12 @@ func (d DPT_9027) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9027) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -845,7 +845,7 @@ func (d DPT_9027) Unit() string {
 }
 
 func (d DPT_9027) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9027) Float() float64 {
 	return float64(d)
@@ -855,12 +855,12 @@ func (d *DPT_9027) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9027(float32(result))
+	*d = DPT_9027(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9028 represents DPT 9.028 / Wind Speed km/h.
-type DPT_9028 float32
+type DPT_9028 float64
 
 func (d DPT_9028) Pack() []byte {
 	if d <= 0 {
@@ -868,12 +868,12 @@ func (d DPT_9028) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9028) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -892,7 +892,7 @@ func (d DPT_9028) Unit() string {
 }
 
 func (d DPT_9028) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9028) Float() float64 {
 	return float64(d)
@@ -902,12 +902,12 @@ func (d *DPT_9028) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9028(float32(result))
+	*d = DPT_9028(float64(result))
 	return d.Pack(), nil
 }
 
 // DPT_9029 represents DPT 9.029 / Absolute air humidity g/m3.
-type DPT_9029 float32
+type DPT_9029 float64
 
 func (d DPT_9029) Pack() []byte {
 	if d <= 0 {
@@ -915,12 +915,12 @@ func (d DPT_9029) Pack() []byte {
 	} else if d >= 670760 {
 		return packF16(670760)
 	} else {
-		return packF16(float32(d))
+		return packF16(float64(d))
 	}
 }
 
 func (d *DPT_9029) Unpack(data []byte) error {
-	var value float32
+	var value float64
 	if err := unpackF16(data, &value); err != nil {
 		return err
 	}
@@ -939,7 +939,7 @@ func (d DPT_9029) Unit() string {
 }
 
 func (d DPT_9029) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.2f", float64(d))
 }
 func (d DPT_9029) Float() float64 {
 	return float64(d)
@@ -949,6 +949,6 @@ func (d *DPT_9029) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_9029(float32(result))
+	*d = DPT_9029(float64(result))
 	return d.Pack(), nil
 }

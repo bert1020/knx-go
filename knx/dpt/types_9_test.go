@@ -4,11 +4,18 @@
 package dpt
 
 import (
+	"fmt"
 	"testing"
 
 	"math"
 	"math/rand"
 )
+
+func Test1(t *testing.T) {
+	dpt9001 := DPT_9001(35.6)
+	pack := dpt9001.Pack()
+	fmt.Println(fmt.Sprintf("Pack: % X", pack))
+}
 
 // Test DPT 9.001 (Temperature) with values within range
 func TestDPT_9001(t *testing.T) {
