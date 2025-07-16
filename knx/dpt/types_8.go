@@ -98,7 +98,7 @@ func (d DPT_8003) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_8003) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	result, err := strconv.ParseFloat(data, 32)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (d DPT_8004) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_8004) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	result, err := strconv.ParseFloat(data, 32)
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +264,7 @@ func (d DPT_8010) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_8010) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	result, err := strconv.ParseFloat(data, 32)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package dpt
 
 import (
+	"fmt"
 	"testing"
 
 	"math"
@@ -16,6 +17,14 @@ func getRandValue() (float32, float32) {
 	// Calculate the quantization error we expect
 	Q := get_float_quantization_error(value, 0.01, 2047)
 	return value, Q
+}
+func TestFloat32(t *testing.T) {
+	var dpt DPT_14002
+	array, err := dpt.ToByteArray("32.3")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(array)
 }
 
 // Test DPT 14.000 (Acceleration) with values within range

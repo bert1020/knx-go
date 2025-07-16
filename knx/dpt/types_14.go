@@ -43,7 +43,7 @@ func (d *DPT_14000) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14000(float32(result))
+	*d = DPT_14000(result)
 	return d.Pack(), nil
 }
 
@@ -119,7 +119,7 @@ func (d *DPT_14002) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14002(float32(result))
+	*d = DPT_14002(result)
 	return d.Pack(), nil
 }
 
@@ -157,7 +157,7 @@ func (d *DPT_14003) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14003(float32(result))
+	*d = DPT_14003(result)
 	return d.Pack(), nil
 }
 
@@ -195,7 +195,7 @@ func (d *DPT_14004) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14004(float32(result))
+	*d = DPT_14004(result)
 	return d.Pack(), nil
 }
 
@@ -233,7 +233,7 @@ func (d *DPT_14005) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14005(float32(result))
+	*d = DPT_14005(result)
 	return d.Pack(), nil
 }
 
@@ -309,7 +309,7 @@ func (d *DPT_14007) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14007(float32(result))
+	*d = DPT_14007(result)
 	return d.Pack(), nil
 }
 
@@ -347,7 +347,7 @@ func (d *DPT_14008) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14008(float32(result))
+	*d = DPT_14008(result)
 	return d.Pack(), nil
 }
 
@@ -385,7 +385,7 @@ func (d *DPT_14009) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14009(float32(result))
+	*d = DPT_14009(result)
 	return d.Pack(), nil
 }
 
@@ -423,7 +423,7 @@ func (d *DPT_14010) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14010(float32(result))
+	*d = DPT_14010(result)
 	return d.Pack(), nil
 }
 
@@ -461,7 +461,7 @@ func (d *DPT_14011) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14011(float32(result))
+	*d = DPT_14011(result)
 	return d.Pack(), nil
 }
 
@@ -498,7 +498,7 @@ func (d *DPT_14012) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14012(float32(result))
+	*d = DPT_14012(result)
 	return d.Pack(), nil
 }
 
@@ -536,7 +536,7 @@ func (d *DPT_14013) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14013(float32(result))
+	*d = DPT_14013(result)
 	return d.Pack(), nil
 }
 
@@ -574,7 +574,7 @@ func (d *DPT_14014) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14014(float32(result))
+	*d = DPT_14014(result)
 	return d.Pack(), nil
 }
 
@@ -612,7 +612,7 @@ func (d *DPT_14015) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14015(float32(result))
+	*d = DPT_14015(result)
 	return d.Pack(), nil
 }
 
@@ -650,7 +650,7 @@ func (d *DPT_14016) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14016(float32(result))
+	*d = DPT_14016(result)
 	return d.Pack(), nil
 }
 
@@ -688,7 +688,7 @@ func (d *DPT_14017) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14017(float32(result))
+	*d = DPT_14017(result)
 	return d.Pack(), nil
 }
 
@@ -726,7 +726,7 @@ func (d *DPT_14018) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14018(float32(result))
+	*d = DPT_14018(result)
 	return d.Pack(), nil
 }
 
@@ -764,7 +764,7 @@ func (d *DPT_14019) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14019(float32(result))
+	*d = DPT_14019(result)
 	return d.Pack(), nil
 }
 
@@ -803,7 +803,7 @@ func (d *DPT_14020) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14020(float32(result))
+	*d = DPT_14020(result)
 	return d.Pack(), nil
 }
 
@@ -841,7 +841,7 @@ func (d *DPT_14021) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14021(float32(result))
+	*d = DPT_14021(result)
 	return d.Pack(), nil
 }
 
@@ -879,7 +879,7 @@ func (d *DPT_14022) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14022(float32(result))
+	*d = DPT_14022(result)
 	return d.Pack(), nil
 }
 
@@ -917,7 +917,7 @@ func (d *DPT_14023) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14023(float32(result))
+	*d = DPT_14023(result)
 	return d.Pack(), nil
 }
 
@@ -955,7 +955,7 @@ func (d *DPT_14024) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14024(float32(result))
+	*d = DPT_14024(result)
 	return d.Pack(), nil
 }
 
@@ -993,7 +993,7 @@ func (d *DPT_14025) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14025(float32(result))
+	*d = DPT_14025(result)
 	return d.Pack(), nil
 }
 
@@ -1031,7 +1031,7 @@ func (d *DPT_14026) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14026(float32(result))
+	*d = DPT_14026(result)
 	return d.Pack(), nil
 }
 
@@ -1069,7 +1069,7 @@ func (d *DPT_14027) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14027(float32(result))
+	*d = DPT_14027(result)
 	return d.Pack(), nil
 }
 
@@ -1107,7 +1107,7 @@ func (d *DPT_14028) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14028(float32(result))
+	*d = DPT_14028(result)
 	return d.Pack(), nil
 }
 
@@ -1145,7 +1145,7 @@ func (d *DPT_14029) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14029(float32(result))
+	*d = DPT_14029(result)
 	return d.Pack(), nil
 }
 
@@ -1183,7 +1183,7 @@ func (d *DPT_14030) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14030(float32(result))
+	*d = DPT_14030(result)
 	return d.Pack(), nil
 }
 
@@ -1221,7 +1221,7 @@ func (d *DPT_14031) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14031(float32(result))
+	*d = DPT_14031(result)
 	return d.Pack(), nil
 }
 
@@ -1259,7 +1259,7 @@ func (d *DPT_14032) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14032(float32(result))
+	*d = DPT_14032(result)
 	return d.Pack(), nil
 }
 
@@ -1297,7 +1297,7 @@ func (d *DPT_14033) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14033(float32(result))
+	*d = DPT_14033(result)
 	return d.Pack(), nil
 }
 
@@ -1335,7 +1335,7 @@ func (d *DPT_14034) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14034(float32(result))
+	*d = DPT_14034(result)
 	return d.Pack(), nil
 }
 
@@ -1373,7 +1373,7 @@ func (d *DPT_14035) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14035(float32(result))
+	*d = DPT_14035(result)
 	return d.Pack(), nil
 }
 
@@ -1411,7 +1411,7 @@ func (d *DPT_14036) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14036(float32(result))
+	*d = DPT_14036(result)
 	return d.Pack(), nil
 }
 
@@ -1449,7 +1449,7 @@ func (d *DPT_14037) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14037(float32(result))
+	*d = DPT_14037(result)
 	return d.Pack(), nil
 }
 
@@ -1487,7 +1487,7 @@ func (d *DPT_14038) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14038(float32(result))
+	*d = DPT_14038(result)
 	return d.Pack(), nil
 }
 
@@ -1525,7 +1525,7 @@ func (d *DPT_14039) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14039(float32(result))
+	*d = DPT_14039(result)
 	return d.Pack(), nil
 }
 
@@ -1563,7 +1563,7 @@ func (d *DPT_14040) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14040(float32(result))
+	*d = DPT_14040(result)
 	return d.Pack(), nil
 }
 
@@ -1601,7 +1601,7 @@ func (d *DPT_14041) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14041(float32(result))
+	*d = DPT_14041(result)
 	return d.Pack(), nil
 }
 
@@ -1639,7 +1639,7 @@ func (d *DPT_14042) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14042(float32(result))
+	*d = DPT_14042(result)
 	return d.Pack(), nil
 }
 
@@ -1677,7 +1677,7 @@ func (d *DPT_14043) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14043(float32(result))
+	*d = DPT_14043(result)
 	return d.Pack(), nil
 }
 
@@ -1715,7 +1715,7 @@ func (d *DPT_14044) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14044(float32(result))
+	*d = DPT_14044(result)
 	return d.Pack(), nil
 }
 
@@ -1753,7 +1753,7 @@ func (d *DPT_14045) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14045(float32(result))
+	*d = DPT_14045(result)
 	return d.Pack(), nil
 }
 
@@ -1791,7 +1791,7 @@ func (d *DPT_14046) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14046(float32(result))
+	*d = DPT_14046(result)
 	return d.Pack(), nil
 }
 
@@ -1829,7 +1829,7 @@ func (d *DPT_14047) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14047(float32(result))
+	*d = DPT_14047(result)
 	return d.Pack(), nil
 }
 
@@ -1867,7 +1867,7 @@ func (d *DPT_14048) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14048(float32(result))
+	*d = DPT_14048(result)
 	return d.Pack(), nil
 }
 
@@ -1905,7 +1905,7 @@ func (d *DPT_14049) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14049(float32(result))
+	*d = DPT_14049(result)
 	return d.Pack(), nil
 }
 
@@ -1943,7 +1943,7 @@ func (d *DPT_14050) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14050(float32(result))
+	*d = DPT_14050(result)
 	return d.Pack(), nil
 }
 
@@ -1981,7 +1981,7 @@ func (d *DPT_14051) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14051(float32(result))
+	*d = DPT_14051(result)
 	return d.Pack(), nil
 }
 
@@ -2019,7 +2019,7 @@ func (d *DPT_14052) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14052(float32(result))
+	*d = DPT_14052(result)
 	return d.Pack(), nil
 }
 
@@ -2057,7 +2057,7 @@ func (d *DPT_14053) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14053(float32(result))
+	*d = DPT_14053(result)
 	return d.Pack(), nil
 }
 
@@ -2095,7 +2095,7 @@ func (d *DPT_14054) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14054(float32(result))
+	*d = DPT_14054(result)
 	return d.Pack(), nil
 }
 
@@ -2133,7 +2133,7 @@ func (d *DPT_14055) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14055(float32(result))
+	*d = DPT_14055(result)
 	return d.Pack(), nil
 }
 
@@ -2171,7 +2171,7 @@ func (d *DPT_14056) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14056(float32(result))
+	*d = DPT_14056(result)
 	return d.Pack(), nil
 }
 
@@ -2209,7 +2209,7 @@ func (d *DPT_14057) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14057(float32(result))
+	*d = DPT_14057(result)
 	return d.Pack(), nil
 }
 
@@ -2247,7 +2247,7 @@ func (d *DPT_14058) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14058(float32(result))
+	*d = DPT_14058(result)
 	return d.Pack(), nil
 }
 
@@ -2285,7 +2285,7 @@ func (d *DPT_14059) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14059(float32(result))
+	*d = DPT_14059(result)
 	return d.Pack(), nil
 }
 
@@ -2323,7 +2323,7 @@ func (d *DPT_14060) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14060(float32(result))
+	*d = DPT_14060(result)
 	return d.Pack(), nil
 }
 
@@ -2361,7 +2361,7 @@ func (d *DPT_14061) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14061(float32(result))
+	*d = DPT_14061(result)
 	return d.Pack(), nil
 }
 
@@ -2399,7 +2399,7 @@ func (d *DPT_14062) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14062(float32(result))
+	*d = DPT_14062(result)
 	return d.Pack(), nil
 }
 
@@ -2437,7 +2437,7 @@ func (d *DPT_14063) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14063(float32(result))
+	*d = DPT_14063(result)
 	return d.Pack(), nil
 }
 
@@ -2475,7 +2475,7 @@ func (d *DPT_14064) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14064(float32(result))
+	*d = DPT_14064(result)
 	return d.Pack(), nil
 }
 
@@ -2513,7 +2513,7 @@ func (d *DPT_14065) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14065(float32(result))
+	*d = DPT_14065(result)
 	return d.Pack(), nil
 }
 
@@ -2551,7 +2551,7 @@ func (d *DPT_14066) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14066(float32(result))
+	*d = DPT_14066(result)
 	return d.Pack(), nil
 }
 
@@ -2589,7 +2589,7 @@ func (d *DPT_14067) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14067(float32(result))
+	*d = DPT_14067(result)
 	return d.Pack(), nil
 }
 
@@ -2627,7 +2627,7 @@ func (d *DPT_14068) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14068(float32(result))
+	*d = DPT_14068(result)
 	return d.Pack(), nil
 }
 
@@ -2665,7 +2665,7 @@ func (d *DPT_14069) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14069(float32(result))
+	*d = DPT_14069(result)
 	return d.Pack(), nil
 }
 
@@ -2703,7 +2703,7 @@ func (d *DPT_14070) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14070(float32(result))
+	*d = DPT_14070(result)
 	return d.Pack(), nil
 }
 
@@ -2741,7 +2741,7 @@ func (d *DPT_14071) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14071(float32(result))
+	*d = DPT_14071(result)
 	return d.Pack(), nil
 }
 
@@ -2779,7 +2779,7 @@ func (d *DPT_14072) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14072(float32(result))
+	*d = DPT_14072(result)
 	return d.Pack(), nil
 }
 
@@ -2817,7 +2817,7 @@ func (d *DPT_14073) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14073(float32(result))
+	*d = DPT_14073(result)
 	return d.Pack(), nil
 }
 
@@ -2855,7 +2855,7 @@ func (d *DPT_14074) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14074(float32(result))
+	*d = DPT_14074(result)
 	return d.Pack(), nil
 }
 
@@ -2893,7 +2893,7 @@ func (d *DPT_14075) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14075(float32(result))
+	*d = DPT_14075(result)
 	return d.Pack(), nil
 }
 
@@ -2931,7 +2931,7 @@ func (d *DPT_14076) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14076(float32(result))
+	*d = DPT_14076(result)
 	return d.Pack(), nil
 }
 
@@ -2969,7 +2969,7 @@ func (d *DPT_14077) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14077(float32(result))
+	*d = DPT_14077(result)
 	return d.Pack(), nil
 }
 
@@ -3007,7 +3007,7 @@ func (d *DPT_14078) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14078(float32(result))
+	*d = DPT_14078(result)
 	return d.Pack(), nil
 }
 
@@ -3045,7 +3045,7 @@ func (d *DPT_14079) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_14079(float32(result))
+	*d = DPT_14079(result)
 	return d.Pack(), nil
 }
 
@@ -3083,6 +3083,6 @@ func (d *DPT_141200) ToByteArray(data string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	*d = DPT_141200(float32(result))
+	*d = DPT_141200(result)
 	return d.Pack(), nil
 }
