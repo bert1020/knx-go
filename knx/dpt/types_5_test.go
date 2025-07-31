@@ -1,6 +1,7 @@
 package dpt
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"math/rand"
@@ -84,4 +85,10 @@ func TestDPT_5005(t *testing.T) {
 
 func TestString(t *testing.T) {
 	log.Printf("%.2f", 25.568)
+	d, ok := Produce("5.010")
+	assert.True(t, ok)
+
+	array, err := d.ToByteArray("25")
+	assert.NoError(t, err)
+	fmt.Printf("%v\n", array)
 }

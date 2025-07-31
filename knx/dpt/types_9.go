@@ -952,3 +952,49 @@ func (d *DPT_9029) ToByteArray(data string) ([]byte, error) {
 	*d = DPT_9029(result)
 	return d.Pack(), nil
 }
+
+// DPT_9030 represents DPT 9.030 / concentration µg/m³.
+type DPT_9030 float64
+
+func (d DPT_9030) Pack() []byte {
+	if d <= 0 {
+		return packF16(0)
+	} else if d >= 670760 {
+		return packF16(670760)
+	} else {
+		return packF16(float64(d))
+	}
+}
+
+func (d *DPT_9030) Unpack(data []byte) error {
+	var value float64
+	if err := unpackF16(data, &value); err != nil {
+		return err
+	}
+	// Check the value for valid range
+	if value < 0 || value > 670760 {
+		return fmt.Errorf("concentration \"%.2f\" outside range [0, 670760]", value)
+	}
+
+	*d = DPT_9030(value)
+	return nil
+}
+
+func (d DPT_9030) Unit() string {
+	return "µg/m³"
+}
+
+func (d DPT_9030) String() string {
+	return fmt.Sprintf("%.2f", float64(d))
+}
+func (d DPT_9030) Float() float64 {
+	return float64(d)
+}
+func (d *DPT_9030) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 64)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_9030(result)
+	return d.Pack(), nil
+}

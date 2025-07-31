@@ -150,3 +150,33 @@ func (d *DPT_5005) ToByteArray(data string) ([]byte, error) {
 	*d = DPT_5005(result)
 	return d.Pack(), nil
 }
+
+// DPT_5010 represents DPT 5.005 / Ratio (0..255).
+type DPT_5010 uint8
+
+func (d DPT_5010) Pack() []byte {
+	return packU8(uint8(d))
+}
+
+func (d *DPT_5010) Unpack(data []byte) error {
+	return unpackU8(data, (*uint8)(d))
+}
+
+func (d DPT_5010) Unit() string {
+	return ""
+}
+
+func (d DPT_5010) String() string {
+	return fmt.Sprintf("%d", uint8(d))
+}
+func (d DPT_5010) Float() float64 {
+	return float64(d)
+}
+func (d *DPT_5010) ToByteArray(data string) ([]byte, error) {
+	result, err := strconv.ParseFloat(data, 32)
+	if err != nil {
+		return nil, err
+	}
+	*d = DPT_5010(result)
+	return d.Pack(), nil
+}
