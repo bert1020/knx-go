@@ -92,3 +92,13 @@ func TestString(t *testing.T) {
 	assert.NoError(t, err)
 	fmt.Printf("%v\n", array)
 }
+func TestDPT_5001_ToByteArray(t *testing.T) {
+	d, _ := Produce("5.001")
+	d.Unpack([]byte{0, 97})
+	fmt.Println(d.String())
+
+	dpt5001 := DPT_5001(38)
+	fmt.Println(dpt5001.Pack())
+	ss := 96.9
+	fmt.Println(uint8(math.Round(ss)))
+}

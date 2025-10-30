@@ -2,6 +2,7 @@ package dpt
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -14,7 +15,7 @@ func (d DPT_5001) Pack() []byte {
 	} else if d >= 100 {
 		return packU8(255)
 	} else {
-		return packU8(uint8(d * 2.55))
+		return packU8(uint8(math.Round(float64(d * 2.55))))
 	}
 }
 
@@ -34,10 +35,10 @@ func (d DPT_5001) Unit() string {
 }
 
 func (d DPT_5001) String() string {
-	return fmt.Sprintf("%.2f", float32(d))
+	return fmt.Sprintf("%.0f", math.Round(float64(d)))
 }
 func (d DPT_5001) Float() float64 {
-	return float64(d)
+	return math.Round(float64(d))
 }
 func (d *DPT_5001) ToByteArray(data string) ([]byte, error) {
 	result, err := strconv.ParseFloat(data, 32)
