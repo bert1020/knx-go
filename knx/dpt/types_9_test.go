@@ -12,9 +12,15 @@ import (
 )
 
 func Test1(t *testing.T) {
-	dpt9001 := DPT_9001(35.6)
+	dpt9001 := DPT_9001(87)
 	pack := dpt9001.Pack()
 	fmt.Println(fmt.Sprintf("Pack: % X", pack))
+	err := dpt9001.Unpack(pack)
+	if err != nil {
+		fmt.Println(err)
+	}
+	float := dpt9001.String()
+	fmt.Println(float)
 }
 
 // Test DPT 9.001 (Temperature) with values within range

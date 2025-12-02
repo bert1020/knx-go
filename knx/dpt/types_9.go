@@ -29,7 +29,7 @@ func (d *DPT_9001) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -273 || value > 670760 {
-		return fmt.Errorf("temperature \"%.2f\" outside range [-273, 670760]", value)
+		return fmt.Errorf("temperature \"%.1f\" outside range [-273, 670760]", value)
 	}
 
 	*d = DPT_9001(value)
@@ -41,7 +41,7 @@ func (d DPT_9001) Unit() string {
 }
 
 func (d DPT_9001) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9001) Float() float64 {
 	return float64(d)
@@ -76,7 +76,7 @@ func (d *DPT_9002) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("temperature \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("temperature \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9002(value)
@@ -88,7 +88,7 @@ func (d DPT_9002) Unit() string {
 }
 
 func (d DPT_9002) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9002) Float() float64 {
 	return float64(d)
@@ -123,7 +123,7 @@ func (d *DPT_9003) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("temperature \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("temperature \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9003(value)
@@ -135,7 +135,7 @@ func (d DPT_9003) Unit() string {
 }
 
 func (d DPT_9003) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9003) Float() float64 {
 	return float64(d)
@@ -170,7 +170,7 @@ func (d *DPT_9004) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("illumination \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("illumination \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9004(value)
@@ -182,7 +182,7 @@ func (d DPT_9004) Unit() string {
 }
 
 func (d DPT_9004) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9004) Float() float64 {
 	return float64(d)
@@ -218,7 +218,7 @@ func (d *DPT_9005) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("wind speed \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("wind speed \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9005(value)
@@ -230,7 +230,7 @@ func (d DPT_9005) Unit() string {
 }
 
 func (d DPT_9005) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9005) Float() float64 {
 	return float64(d)
@@ -266,7 +266,7 @@ func (d *DPT_9006) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("pressure \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("pressure \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9006(value)
@@ -278,7 +278,7 @@ func (d DPT_9006) Unit() string {
 }
 
 func (d DPT_9006) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9006) Float() float64 {
 	return float64(d)
@@ -314,7 +314,7 @@ func (d *DPT_9007) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("humidity \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("humidity \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9007(value)
@@ -326,7 +326,7 @@ func (d DPT_9007) Unit() string {
 }
 
 func (d DPT_9007) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9007) Float() float64 {
 	return float64(d)
@@ -362,7 +362,7 @@ func (d *DPT_9008) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("air quality \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("air quality \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9008(value)
@@ -375,7 +375,7 @@ func (d DPT_9008) Unit() string {
 }
 
 func (d DPT_9008) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9008) Float() float64 {
 	return float64(d)
@@ -410,7 +410,7 @@ func (d *DPT_9010) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("time \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("time \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9010(value)
@@ -422,7 +422,7 @@ func (d DPT_9010) Unit() string {
 }
 
 func (d DPT_9010) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9010) Float() float64 {
 	return float64(d)
@@ -457,7 +457,7 @@ func (d *DPT_9011) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("time \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("time \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9011(value)
@@ -469,7 +469,7 @@ func (d DPT_9011) Unit() string {
 }
 
 func (d DPT_9011) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9011) Float() float64 {
 	return float64(d)
@@ -504,7 +504,7 @@ func (d *DPT_9020) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("volt \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("volt \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9020(value)
@@ -516,7 +516,7 @@ func (d DPT_9020) Unit() string {
 }
 
 func (d DPT_9020) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9020) Float() float64 {
 	return float64(d)
@@ -551,7 +551,7 @@ func (d *DPT_9021) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("current \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("current \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9021(value)
@@ -563,7 +563,7 @@ func (d DPT_9021) Unit() string {
 }
 
 func (d DPT_9021) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9021) Float() float64 {
 	return float64(d)
@@ -598,7 +598,7 @@ func (d *DPT_9022) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("power Density \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("power Density \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9022(value)
@@ -610,7 +610,7 @@ func (d DPT_9022) Unit() string {
 }
 
 func (d DPT_9022) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9022) Float() float64 {
 	return float64(d)
@@ -645,7 +645,7 @@ func (d *DPT_9023) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("kelvin per percent \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("kelvin per percent \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9023(value)
@@ -657,7 +657,7 @@ func (d DPT_9023) Unit() string {
 }
 
 func (d DPT_9023) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9023) Float() float64 {
 	return float64(d)
@@ -692,7 +692,7 @@ func (d *DPT_9024) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("power \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("power \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9024(value)
@@ -704,7 +704,7 @@ func (d DPT_9024) Unit() string {
 }
 
 func (d DPT_9024) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9024) Float() float64 {
 	return float64(d)
@@ -739,7 +739,7 @@ func (d *DPT_9025) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("volume flow \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("volume flow \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9025(value)
@@ -751,7 +751,7 @@ func (d DPT_9025) Unit() string {
 }
 
 func (d DPT_9025) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9025) Float() float64 {
 	return float64(d)
@@ -786,7 +786,7 @@ func (d *DPT_9026) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -670760 || value > 670760 {
-		return fmt.Errorf("rain amount \"%.2f\" outside range [-670760, 670760]", value)
+		return fmt.Errorf("rain amount \"%.1f\" outside range [-670760, 670760]", value)
 	}
 
 	*d = DPT_9026(value)
@@ -798,7 +798,7 @@ func (d DPT_9026) Unit() string {
 }
 
 func (d DPT_9026) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9026) Float() float64 {
 	return float64(d)
@@ -833,7 +833,7 @@ func (d *DPT_9027) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < -459.6 || value > 670760 {
-		return fmt.Errorf("rain amount \"%.2f\" outside range [-459.6, 670760]", value)
+		return fmt.Errorf("rain amount \"%.1f\" outside range [-459.6, 670760]", value)
 	}
 
 	*d = DPT_9027(value)
@@ -845,7 +845,7 @@ func (d DPT_9027) Unit() string {
 }
 
 func (d DPT_9027) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9027) Float() float64 {
 	return float64(d)
@@ -880,7 +880,7 @@ func (d *DPT_9028) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("wind speed \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("wind speed \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9028(value)
@@ -892,7 +892,7 @@ func (d DPT_9028) Unit() string {
 }
 
 func (d DPT_9028) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9028) Float() float64 {
 	return float64(d)
@@ -927,7 +927,7 @@ func (d *DPT_9029) Unpack(data []byte) error {
 
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("absolute air humidity \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("absolute air humidity \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9029(value)
@@ -939,7 +939,7 @@ func (d DPT_9029) Unit() string {
 }
 
 func (d DPT_9029) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9029) Float() float64 {
 	return float64(d)
@@ -973,7 +973,7 @@ func (d *DPT_9030) Unpack(data []byte) error {
 	}
 	// Check the value for valid range
 	if value < 0 || value > 670760 {
-		return fmt.Errorf("concentration \"%.2f\" outside range [0, 670760]", value)
+		return fmt.Errorf("concentration \"%.1f\" outside range [0, 670760]", value)
 	}
 
 	*d = DPT_9030(value)
@@ -985,7 +985,7 @@ func (d DPT_9030) Unit() string {
 }
 
 func (d DPT_9030) String() string {
-	return fmt.Sprintf("%.2f", float64(d))
+	return fmt.Sprintf("%.1f", float64(d))
 }
 func (d DPT_9030) Float() float64 {
 	return float64(d)
