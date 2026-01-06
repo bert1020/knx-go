@@ -27,10 +27,11 @@ func (d DPT_12001) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_12001) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_12001(result)
 	return d.Pack(), nil
 }

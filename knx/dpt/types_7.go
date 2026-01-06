@@ -30,10 +30,11 @@ func (d DPT_7001) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7001) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7001(result)
 	return d.Pack(), nil
 }
@@ -60,10 +61,11 @@ func (d DPT_7002) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7002) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7002(result)
 	return d.Pack(), nil
 }
@@ -90,10 +92,11 @@ func (d DPT_7003) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7003) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7003(result)
 	return d.Pack(), nil
 }
@@ -120,10 +123,11 @@ func (d DPT_7004) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7004) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7004(result)
 	return d.Pack(), nil
 }
@@ -150,10 +154,11 @@ func (d DPT_7005) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7005) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7005(result)
 	return d.Pack(), nil
 }
@@ -180,10 +185,11 @@ func (d DPT_7006) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7006) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7006(result)
 	return d.Pack(), nil
 }
@@ -210,10 +216,11 @@ func (d DPT_7007) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7007) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7007(result)
 	return d.Pack(), nil
 }
@@ -240,10 +247,11 @@ func (d DPT_7010) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7010) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7010(result)
 	return d.Pack(), nil
 }
@@ -270,10 +278,11 @@ func (d DPT_7011) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7011) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7011(result)
 	return d.Pack(), nil
 }
@@ -300,10 +309,11 @@ func (d DPT_7012) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7012) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7012(result)
 	return d.Pack(), nil
 }
@@ -330,10 +340,11 @@ func (d DPT_7013) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7013) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7013(result)
 	return d.Pack(), nil
 }
@@ -360,10 +371,11 @@ func (d DPT_7600) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_7600) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_7600(result)
 	return d.Pack(), nil
 }

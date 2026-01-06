@@ -46,10 +46,11 @@ func (d DPT_20102) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_20102) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_20102(result)
 	return d.Pack(), nil
 }
@@ -124,10 +125,11 @@ func (d DPT_20105) Float() float64 {
 	return float64(d)
 }
 func (d *DPT_20105) ToByteArray(data string) ([]byte, error) {
-	result, err := strconv.Atoi(data)
+	f, err := strconv.ParseFloat(data, 64)
 	if err != nil {
 		return nil, err
 	}
+	result := int(f)
 	*d = DPT_20105(result)
 	return d.Pack(), nil
 }
