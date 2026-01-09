@@ -89,24 +89,31 @@ func (d DPT_11001) Float() float64 {
 	return float64(d.Year) + float64(d.Month) + float64(d.Day)
 }
 func (d *DPT_11001) ToByteArray(data string) ([]byte, error) {
-	split := strings.Split(data, ",")
-	if len(split) != 3 {
-		return nil, ErrInvalidLength
+	if data == "" {
+		now := time.Now()
+		d.Year = uint16(now.Year())
+		d.Month = uint8(now.Month())
+		d.Day = uint8(now.Day())
+	} else {
+		split := strings.Split(data, ",")
+		if len(split) != 3 {
+			return nil, ErrInvalidLength
+		}
+		year, err := strconv.Atoi(split[0])
+		if err != nil {
+			return nil, err
+		}
+		d.Year = uint16(year)
+		month, err := strconv.Atoi(split[1])
+		if err != nil {
+			return nil, err
+		}
+		d.Month = uint8(month)
+		day, err := strconv.Atoi(split[2])
+		if err != nil {
+			return nil, err
+		}
+		d.Day = uint8(day)
 	}
-	year, err := strconv.Atoi(split[0])
-	if err != nil {
-		return nil, err
-	}
-	d.Year = uint16(year)
-	month, err := strconv.Atoi(split[1])
-	if err != nil {
-		return nil, err
-	}
-	d.Month = uint8(month)
-	day, err := strconv.Atoi(split[2])
-	if err != nil {
-		return nil, err
-	}
-	d.Day = uint8(day)
 	return d.Pack(), nil
 }

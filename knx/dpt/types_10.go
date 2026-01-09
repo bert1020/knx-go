@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // DPT_10001 represents DPT 10.001 / TimeOfDay p. 34.
@@ -67,29 +68,41 @@ func (d DPT_10001) Float() float64 {
 	return float64(d.Weekday) + float64(d.Minutes) + float64(d.Hour) + float64(d.Seconds)
 }
 func (d *DPT_10001) ToByteArray(data string) ([]byte, error) {
-	split := strings.Split(data, ",")
-	if len(split) != 4 {
-		return nil, ErrInvalidLength
+	if data == "" {
+		now := time.Now()
+		wd := uint8(now.Weekday())
+		if wd == 0 {
+			wd = 7
+		}
+		d.Weekday = wd
+		d.Hour = uint8(now.Hour())
+		d.Minutes = uint8(now.Minute())
+		d.Seconds = uint8(now.Second())
+	} else {
+		split := strings.Split(data, ",")
+		if len(split) != 4 {
+			return nil, ErrInvalidLength
+		}
+		week, err := strconv.Atoi(split[0])
+		if err != nil {
+			return nil, err
+		}
+		d.Weekday = uint8(week)
+		hour, err := strconv.Atoi(split[1])
+		if err != nil {
+			return nil, err
+		}
+		d.Hour = uint8(hour)
+		minutes, err := strconv.Atoi(split[2])
+		if err != nil {
+			return nil, err
+		}
+		d.Minutes = uint8(minutes)
+		seconds, err := strconv.Atoi(split[3])
+		if err != nil {
+			return nil, err
+		}
+		d.Seconds = uint8(seconds)
 	}
-	week, err := strconv.Atoi(split[0])
-	if err != nil {
-		return nil, err
-	}
-	d.Weekday = uint8(week)
-	hour, err := strconv.Atoi(split[1])
-	if err != nil {
-		return nil, err
-	}
-	d.Hour = uint8(hour)
-	minutes, err := strconv.Atoi(split[2])
-	if err != nil {
-		return nil, err
-	}
-	d.Minutes = uint8(minutes)
-	seconds, err := strconv.Atoi(split[3])
-	if err != nil {
-		return nil, err
-	}
-	d.Seconds = uint8(seconds)
 	return d.Pack(), nil
 }
