@@ -22,9 +22,9 @@ func (d DPT_1001) Unit() string {
 
 func (d DPT_1001) String() string {
 	if d {
-		return "On"
+		return "1"
 	} else {
-		return "Off"
+		return "0"
 	}
 }
 func (d DPT_1001) Float() float64 {
@@ -57,9 +57,9 @@ func (d DPT_1002) Unit() string {
 
 func (d DPT_1002) String() string {
 	if d {
-		return "True"
+		return "1"
 	} else {
-		return "False"
+		return "0"
 	}
 }
 
@@ -92,9 +92,9 @@ func (d DPT_1003) Unit() string {
 
 func (d DPT_1003) String() string {
 	if d {
-		return "Enable"
+		return "1"
 	} else {
-		return "Disable"
+		return "0"
 	}
 }
 func (d DPT_1003) Float() float64 {
@@ -126,9 +126,9 @@ func (d DPT_1004) Unit() string {
 
 func (d DPT_1004) String() string {
 	if d {
-		return "Ramp"
+		return "1"
 	} else {
-		return "No ramp"
+		return "0"
 	}
 }
 func (d DPT_1004) Float() float64 {
@@ -160,9 +160,9 @@ func (d DPT_1005) Unit() string {
 
 func (d DPT_1005) String() string {
 	if d {
-		return "Alarm"
+		return "1"
 	} else {
-		return "No alarm"
+		return "0"
 	}
 }
 func (d DPT_1005) Float() float64 {
@@ -194,9 +194,9 @@ func (d DPT_1006) Unit() string {
 
 func (d DPT_1006) String() string {
 	if d {
-		return "High"
+		return "1"
 	} else {
-		return "Low"
+		return "0"
 	}
 }
 func (d DPT_1006) Float() float64 {
@@ -228,9 +228,9 @@ func (d DPT_1007) Unit() string {
 
 func (d DPT_1007) String() string {
 	if d {
-		return "Increase"
+		return "1"
 	} else {
-		return "Decrease"
+		return "0"
 	}
 }
 func (d DPT_1007) Float() float64 {
@@ -262,9 +262,9 @@ func (d DPT_1008) Unit() string {
 
 func (d DPT_1008) String() string {
 	if d {
-		return "Down"
+		return "1"
 	} else {
-		return "Up"
+		return "0"
 	}
 }
 func (d DPT_1008) Float() float64 {
@@ -296,9 +296,9 @@ func (d DPT_1009) Unit() string {
 
 func (d DPT_1009) String() string {
 	if d {
-		return "Close"
+		return "1"
 	} else {
-		return "Open"
+		return "0"
 	}
 }
 func (d DPT_1009) Float() float64 {
@@ -330,9 +330,9 @@ func (d DPT_1010) Unit() string {
 
 func (d DPT_1010) String() string {
 	if d {
-		return "Start"
+		return "1"
 	} else {
-		return "Stop"
+		return "0"
 	}
 }
 func (d DPT_1010) Float() float64 {
@@ -364,9 +364,9 @@ func (d DPT_1011) Unit() string {
 
 func (d DPT_1011) String() string {
 	if d {
-		return "Active"
+		return "1"
 	} else {
-		return "Inactive"
+		return "0"
 	}
 }
 func (d DPT_1011) Float() float64 {
@@ -398,9 +398,9 @@ func (d DPT_1012) Unit() string {
 
 func (d DPT_1012) String() string {
 	if d {
-		return "Inverted"
+		return "1"
 	} else {
-		return "Not inverted"
+		return "0"
 	}
 }
 func (d DPT_1012) Float() float64 {
@@ -432,9 +432,9 @@ func (d DPT_1013) Unit() string {
 
 func (d DPT_1013) String() string {
 	if d {
-		return "Cyclically"
+		return "1"
 	} else {
-		return "Start/stop"
+		return "0"
 	}
 }
 func (d DPT_1013) Float() float64 {
@@ -466,9 +466,9 @@ func (d DPT_1014) Unit() string {
 
 func (d DPT_1014) String() string {
 	if d {
-		return "Calculated"
+		return "1"
 	} else {
-		return "Fixed"
+		return "0"
 	}
 }
 func (d DPT_1014) Float() float64 {
@@ -500,9 +500,9 @@ func (d DPT_1015) Unit() string {
 
 func (d DPT_1015) String() string {
 	if d {
-		return "reset command"
+		return "1"
 	} else {
-		return "no action"
+		return "0"
 	}
 }
 func (d DPT_1015) Float() float64 {
@@ -534,9 +534,9 @@ func (d DPT_1016) Unit() string {
 
 func (d DPT_1016) String() string {
 	if d {
-		return "acknowledge command"
+		return "1"
 	} else {
-		return "no action"
+		return "0"
 	}
 }
 func (d DPT_1016) Float() float64 {
@@ -568,9 +568,9 @@ func (d DPT_1017) Unit() string {
 
 func (d DPT_1017) String() string {
 	if d {
-		return "trigger"
+		return "1"
 	} else {
-		return "trigger"
+		return "0"
 	}
 }
 func (d DPT_1017) Float() float64 {
@@ -602,9 +602,9 @@ func (d DPT_1018) Unit() string {
 
 func (d DPT_1018) String() string {
 	if d {
-		return "occupied"
+		return "1"
 	} else {
-		return "not occupied"
+		return "0"
 	}
 }
 func (d DPT_1018) Float() float64 {
@@ -636,9 +636,9 @@ func (d DPT_1019) Unit() string {
 
 func (d DPT_1019) String() string {
 	if d {
-		return "open"
+		return "1"
 	} else {
-		return "closed"
+		return "0"
 	}
 }
 func (d DPT_1019) Float() float64 {
@@ -670,9 +670,9 @@ func (d DPT_1021) Unit() string {
 
 func (d DPT_1021) String() string {
 	if d {
-		return "AND"
+		return "1"
 	} else {
-		return "OR"
+		return "0"
 	}
 }
 func (d DPT_1021) Float() float64 {
@@ -704,9 +704,9 @@ func (d DPT_1022) Unit() string {
 
 func (d DPT_1022) String() string {
 	if d {
-		return "scene B"
+		return "1"
 	} else {
-		return "scene A"
+		return "0"
 	}
 }
 func (d DPT_1022) Float() float64 {
@@ -739,9 +739,9 @@ func (d DPT_1023) Unit() string {
 
 func (d DPT_1023) String() string {
 	if d {
-		return "move Up/Down + StepStop mode"
+		return "1"
 	} else {
-		return "only move Up/Down mode"
+		return "0"
 	}
 }
 func (d DPT_1023) Float() float64 {
@@ -773,9 +773,9 @@ func (d DPT_1024) Unit() string {
 
 func (d DPT_1024) String() string {
 	if d {
-		return "Night"
+		return "1"
 	} else {
-		return "Day"
+		return "0"
 	}
 }
 func (d DPT_1024) Float() float64 {
@@ -808,9 +808,9 @@ func (d DPT_1100) Unit() string {
 
 func (d DPT_1100) String() string {
 	if d {
-		return "heating"
+		return "1"
 	} else {
-		return "cooling"
+		return "0"
 	}
 }
 func (d DPT_1100) Float() float64 {
