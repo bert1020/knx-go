@@ -6,11 +6,63 @@
 This repository contains a collection of Go packages that provide the means to communicate with KNX
 networks.
 
+## USB and device management
+
+The existing `Tunnel` and `Router` implementations remain the IP transports. `USB` adds a cEMI
+transport with the same `Send` and `Inbound` methods. A `Device` is opened from one of these
+connections by physical address and exposes individual management operations. The implementation
+uses Go and the KNX protocols directly; it does not load Falcon DLLs.
+
+Connect through a KNXnet/IP tunneling gateway:
+
+```go
+transport, err := knx.NewTunnel("192.168.1.10:3671", knxnet.TunnelLayerData, knx.DefaultTunnelConfig)
+if err != nil { return err }
+defer transport.Close()
+
+address, err := cemi.NewIndividualAddrString("1.1.10")
+if err != nil { return err }
+device, err := transport.OpenDevice(ctx, address)
+if err != nil { return err }
+defer device.Close()
+
+objects, err := device.ReadInterfaceObjects(ctx)
+if err != nil { return err }
+description, err := device.ReadPropertyDescriptionByID(ctx, 0, knx.PIDIOList)
+if err != nil { return err }
+value, err := device.ReadPropertyValue(ctx, 0, knx.PIDObjectType, 1, 1)
+if err != nil { return err }
+fmt.Printf("objects=%v property=%+v object-type=%x\n", objects, description, value)
+```
+
+For USB, call `ListUSBDevices()`, open a returned path with `NewUSB(ctx, path)`, then call
+`usb.OpenDevice(ctx, address)`. An existing `Router` can call
+`router.OpenDevice(ctx, source, address)`; routing requires a physical source address reserved for
+the client. `OpenDeviceConnectionless` provides unnumbered management for devices that reject a
+transport connection. A `Device` consumes the connection's cEMI inbound stream while open, so use
+a dedicated connection if group monitoring is needed at the same time.
+
+`DiscoverInterfaces(multicastAddress, timeout)` combines the existing IP `Discover` results with
+USB HID enumeration. The original `Discover` and `DiscoverOnInterface` signatures remain available
+for existing IP discovery callers.
+
+`Device` exposes `ReadDeviceDescriptor`, `ReadPropertyElementCount`, `ReadPropertyValue`,
+`ReadPropertyDescriptionByID`, `ReadPropertyDescriptionByIndex`, `ReadInterfaceObjectType`, and
+`ReadInterfaceObjects`. The object list comes from device object 0, PID 71 (`PID_IO_LIST`); a device
+that does not implement that property will return an error. Property values remain raw bytes because
+their property data type varies by device. These calls currently cover unencrypted management
+telegram reads; authenticated properties, extended property services, and KNX Secure are not yet
+implemented.
+
+USB uses the standard KNX HID usage page and cEMI transfer protocol. It currently supports Windows
+and Linux devices that advertise cEMI; Linux may require permission to open `/dev/hidraw*`.
+`GroupUSB` is also available when only group communication is needed.
+
 ## Packages
 
  Package           | Description
 -------------------|--------------------------------------------------------------------
- **knx**           | Abstractions to communicate with KNXnet/IP servers
+ **knx**           | KNXnet/IP and USB connections, group communication, device management
  **knx/knxnet**    | KNXnet/IP protocol services
  **knx/dpt**       | Datapoint types
  **knx/cemi**      | CEMI-encoded frames

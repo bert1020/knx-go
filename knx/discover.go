@@ -3,13 +3,109 @@
 package knx
 
 import (
+	"errors"
 	"fmt"
 	"net"
+	"strconv"
 	"time"
 
 	"github.com/vapourismo/knx-go/knx/knxnet"
 	"golang.org/x/net/ipv4"
 )
+
+// InterfaceKind identifies the transport supported by a discovered interface.
+type InterfaceKind string
+
+const (
+	InterfaceIPTunneling InterfaceKind = "ip-tunneling"
+	InterfaceIPRouting   InterfaceKind = "ip-routing"
+	InterfaceUSB         InterfaceKind = "usb"
+)
+
+// DiscoveredInterface is an IP or USB connection candidate. Address is a
+// gateway host:port, routing multicast host:port, or operating-system HID path.
+type DiscoveredInterface struct {
+	Kind    InterfaceKind
+	Address string
+	Name    string
+	IP      *knxnet.SearchRes
+	USB     *USBDevice
+}
+
+// DiscoverInterfaces combines the existing KNXnet/IP discovery with KNX USB
+// HID enumeration. Discover and DiscoverOnInterface retain their IP-only API
+// and return types for callers that already use them.
+func DiscoverInterfaces(multicastDiscoveryAddress string, searchTimeout time.Duration) ([]DiscoveredInterface, error) {
+	return DiscoverInterfacesOnInterface(nil, multicastDiscoveryAddress, searchTimeout)
+}
+
+// DiscoverInterfacesOnInterface uses the existing IP discovery on ifi and also
+// enumerates local USB HID interfaces.
+func DiscoverInterfacesOnInterface(ifi *net.Interface, multicastDiscoveryAddress string, searchTimeout time.Duration) ([]DiscoveredInterface, error) {
+	ip, ipErr := DiscoverOnInterface(ifi, multicastDiscoveryAddress, searchTimeout)
+	usb, usbErr := ListUSBDevices()
+	if errors.Is(usbErr, ErrUSBUnsupported) {
+		usbErr = nil
+	}
+	result := combineDiscoveredInterfaces(ip, usb)
+	if ipErr != nil && usbErr != nil {
+		return result, fmt.Errorf("IP discovery: %v; USB discovery: %v", ipErr, usbErr)
+	}
+	if ipErr != nil {
+		return result, fmt.Errorf("IP discovery: %w", ipErr)
+	}
+	if usbErr != nil {
+		return result, fmt.Errorf("USB discovery: %w", usbErr)
+	}
+	return result, nil
+}
+
+func combineDiscoveredInterfaces(ip []*knxnet.SearchRes, usb []USBDevice) []DiscoveredInterface {
+	result := make([]DiscoveredInterface, 0, len(ip)+len(usb))
+	seen := make(map[string]bool)
+	for _, response := range ip {
+		if response == nil {
+			continue
+		}
+		host := net.JoinHostPort(response.Control.Address.String(), strconv.Itoa(int(response.Control.Port)))
+		name := response.DescriptionB.DeviceHardware.FriendlyName
+		for _, service := range response.DescriptionB.SupportedServices.Families {
+			var kind InterfaceKind
+			var address string
+			switch service.Type {
+			case knxnet.ServiceFamilyTypeIPTunnelling:
+				kind, address = InterfaceIPTunneling, host
+			case knxnet.ServiceFamilyTypeIPRouting:
+				multicast := response.DescriptionB.DeviceHardware.RoutingMulticastAddress.String()
+				if multicast == "0.0.0.0" {
+					multicast = "224.0.23.12"
+				}
+				kind, address = InterfaceIPRouting, net.JoinHostPort(multicast, "3671")
+			default:
+				continue
+			}
+			key := string(kind) + "|" + host
+			if seen[key] {
+				continue
+			}
+			seen[key] = true
+			result = append(result, DiscoveredInterface{Kind: kind, Address: address, Name: name, IP: response})
+		}
+	}
+	for i := range usb {
+		device := usb[i]
+		if device.Path == "" {
+			continue
+		}
+		key := string(InterfaceUSB) + "|" + device.Path
+		if seen[key] {
+			continue
+		}
+		seen[key] = true
+		result = append(result, DiscoveredInterface{Kind: InterfaceUSB, Address: device.Path, Name: device.Name, USB: &device})
+	}
+	return result
+}
 
 // Discover all KNXnet/IP servers.
 func Discover(multicastDiscoveryAddress string, searchTimeout time.Duration) ([]*knxnet.SearchRes, error) {
