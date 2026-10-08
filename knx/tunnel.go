@@ -4,6 +4,7 @@
 package knx
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"sync"
@@ -646,6 +647,137 @@ func (conn *Tunnel) Send(data cemi.Message) error {
 type GroupTunnel struct {
 	*Tunnel
 	inbound chan GroupEvent
+	device  *groupTunnelDeviceState
+}
+
+type groupTunnelDeviceState struct {
+	mu      sync.Mutex
+	inbound chan cemi.Message
+	address cemi.IndividualAddr
+	closed  bool
+}
+
+type groupTunnelDeviceLink struct {
+	tunnel  *Tunnel
+	inbound <-chan cemi.Message
+}
+
+func (link *groupTunnelDeviceLink) Send(msg cemi.Message) error  { return link.tunnel.Send(msg) }
+func (link *groupTunnelDeviceLink) Inbound() <-chan cemi.Message { return link.inbound }
+
+func (gt *GroupTunnel) deviceLink(address cemi.IndividualAddr) (*groupTunnelDeviceLink, func(), error) {
+	if gt == nil || gt.Tunnel == nil || gt.device == nil {
+		return nil, nil, errors.New("group tunnel is not initialized")
+	}
+	state := gt.device
+	state.mu.Lock()
+	defer state.mu.Unlock()
+	if state.closed {
+		return nil, nil, errors.New("group tunnel is closed")
+	}
+	if state.inbound != nil {
+		return nil, nil, errors.New("group tunnel already has an open device")
+	}
+	ch := make(chan cemi.Message, 32)
+	state.inbound = ch
+	state.address = address
+	release := func() {
+		state.mu.Lock()
+		defer state.mu.Unlock()
+		if state.inbound == ch {
+			state.inbound = nil
+			state.address = 0
+			close(ch)
+		}
+	}
+	return &groupTunnelDeviceLink{tunnel: gt.Tunnel, inbound: ch}, release, nil
+}
+
+// OpenDevice connects to a physical address over the existing group tunnel.
+// Group events continue to arrive on Inbound while the device session is open.
+func (gt *GroupTunnel) OpenDevice(ctx context.Context, address cemi.IndividualAddr) (*Device, error) {
+	link, release, err := gt.deviceLink(address)
+	if err != nil {
+		return nil, err
+	}
+	d, err := openDevice(ctx, link, 0, address, true)
+	if err != nil {
+		release()
+		return nil, err
+	}
+	d.onClose = release
+	return d, nil
+}
+
+// OpenDeviceConnectionless opens an unnumbered device session over the group tunnel.
+func (gt *GroupTunnel) OpenDeviceConnectionless(address cemi.IndividualAddr) (*Device, error) {
+	link, release, err := gt.deviceLink(address)
+	if err != nil {
+		return nil, err
+	}
+	d, err := openDevice(nil, link, 0, address, false)
+	if err != nil {
+		release()
+		return nil, err
+	}
+	d.onClose = release
+	return d, nil
+}
+
+func (gt *GroupTunnel) serveInbound() {
+	defer close(gt.inbound)
+	closeDevice := func() {
+		gt.device.mu.Lock()
+		gt.device.closed = true
+		if gt.device.inbound != nil {
+			close(gt.device.inbound)
+			gt.device.inbound = nil
+			gt.device.address = 0
+		}
+		gt.device.mu.Unlock()
+	}
+	defer closeDevice()
+	var pending []GroupEvent
+	raw := gt.Tunnel.Inbound()
+	for raw != nil || len(pending) != 0 {
+		var output chan GroupEvent
+		var next GroupEvent
+		if len(pending) != 0 {
+			output, next = gt.inbound, pending[0]
+		}
+		select {
+		case msg, ok := <-raw:
+			if !ok {
+				raw = nil
+				closeDevice()
+				continue
+			}
+			ind, ok := msg.(*cemi.LDataInd)
+			if !ok {
+				continue
+			}
+			if !ind.Control2.IsGroupAddr() {
+				gt.device.mu.Lock()
+				if gt.device.inbound != nil && ind.Source == gt.device.address {
+					select {
+					case gt.device.inbound <- msg:
+					default:
+					}
+				}
+				gt.device.mu.Unlock()
+				continue
+			}
+			if app, ok := ind.Data.(*cemi.AppData); ok && app.Command.IsGroupCommand() {
+				pending = append(pending, GroupEvent{
+					Command: GroupCommand(app.Command), Source: ind.Source,
+					Destination: cemi.GroupAddr(ind.Destination), Data: app.Data,
+				})
+			}
+		case output <- next:
+			pending[0] = GroupEvent{}
+			pending = pending[1:]
+		}
+	}
 }
 
 // NewGroupTunnel creates a new Tunnel for group communication.
@@ -654,7 +786,8 @@ func NewGroupTunnel(gatewayAddr string, config TunnelConfig) (gt GroupTunnel, er
 
 	if err == nil {
 		gt.inbound = make(chan GroupEvent)
-		go serveGroupInbound(gt.Tunnel.Inbound(), gt.inbound)
+		gt.device = &groupTunnelDeviceState{}
+		go gt.serveInbound()
 	}
 
 	return

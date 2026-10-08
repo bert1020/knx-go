@@ -16,6 +16,7 @@ const (
 	apciDeviceDescriptorResponse    = 0x340
 	apciPropertyValueRead           = 0x3d5
 	apciPropertyValueResponse       = 0x3d6
+	apciPropertyValueWrite          = 0x3d7
 	apciPropertyDescriptionRead     = 0x3d8
 	apciPropertyDescriptionResponse = 0x3d9
 	PIDObjectType                   = 1
@@ -34,6 +35,7 @@ type Device struct {
 	done            chan struct{}
 	linkDone        chan struct{}
 	once            sync.Once
+	onClose         func()
 	requestMu       sync.Mutex
 	sequence        uint8
 	receiveSequence uint8
@@ -177,6 +179,9 @@ func (d *Device) Close() {
 			_ = d.send(&cemi.ControlData{Command: 1})
 		}
 		close(d.done)
+		if d.onClose != nil {
+			d.onClose()
+		}
 	})
 }
 
@@ -280,6 +285,35 @@ func (d *Device) ReadPropertyValue(ctx context.Context, objectIndex, propertyID,
 		return nil, errors.New("property response does not match request")
 	}
 	return append([]byte(nil), data[4:]...), nil
+}
+
+// WritePropertyValue writes 1..15 elements beginning at startIndex (1..4095).
+// Value contains the encoded bytes for those elements, using the property's data type.
+func (d *Device) WritePropertyValue(ctx context.Context, objectIndex, propertyID, count uint8, startIndex uint16, value []byte) error {
+	if count == 0 || count > 15 || startIndex == 0 || startIndex > 0x0fff {
+		return errors.New("invalid property count or start index")
+	}
+	if len(value) == 0 || len(value) > 250 {
+		return errors.New("property value must contain 1..250 bytes")
+	}
+	request := make([]byte, 4, 4+len(value))
+	request[0], request[1] = objectIndex, propertyID
+	request[2], request[3] = count<<4|byte(startIndex>>8), byte(startIndex)
+	request = append(request, value...)
+	data, err := d.request(ctx, apciPropertyValueWrite, apciPropertyValueResponse, request)
+	if err != nil {
+		return err
+	}
+	if len(data) < 4 || data[0] != objectIndex || data[1] != propertyID {
+		return errors.New("invalid property write response")
+	}
+	if data[2]>>4 == 0 {
+		return fmt.Errorf("property %d on object %d rejected the write", propertyID, objectIndex)
+	}
+	if data[2]>>4 != count || uint16(data[2]&15)<<8|uint16(data[3]) != startIndex {
+		return errors.New("property write response does not match request")
+	}
+	return nil
 }
 
 func (d *Device) ReadPropertyElementCount(ctx context.Context, objectIndex, propertyID uint8) (uint16, error) {

@@ -16,7 +16,7 @@ uses Go and the KNX protocols directly; it does not load Falcon DLLs.
 Connect through a KNXnet/IP tunneling gateway:
 
 ```go
-transport, err := knx.NewTunnel("192.168.1.10:3671", knxnet.TunnelLayerData, knx.DefaultTunnelConfig)
+transport, err := knx.NewGroupTunnel("192.168.1.10:3671", knx.DefaultTunnelConfig)
 if err != nil { return err }
 defer transport.Close()
 
@@ -35,18 +35,23 @@ if err != nil { return err }
 fmt.Printf("objects=%v property=%+v object-type=%x\n", objects, description, value)
 ```
 
+For a writable property, pass its object index, property ID, element count, start index, and
+encoded value bytes to `device.WritePropertyValue(ctx, objectIndex, propertyID, count, startIndex,
+value)`. A successful call waits for and validates the device's property response.
+
 For USB, call `ListUSBDevices()`, open a returned path with `NewUSB(ctx, path)`, then call
 `usb.OpenDevice(ctx, address)`. An existing `Router` can call
 `router.OpenDevice(ctx, source, address)`; routing requires a physical source address reserved for
 the client. `OpenDeviceConnectionless` provides unnumbered management for devices that reject a
-transport connection. A `Device` consumes the connection's cEMI inbound stream while open, so use
-a dedicated connection if group monitoring is needed at the same time.
+transport connection. `GroupTunnel.OpenDevice` shares the existing group tunnel with group
+monitoring. A raw `Tunnel`, `Router`, or `USB` device session consumes that connection's cEMI
+inbound stream, so use a dedicated connection when monitoring groups through those raw transports.
 
 `DiscoverInterfaces(multicastAddress, timeout)` combines the existing IP `Discover` results with
 USB HID enumeration. The original `Discover` and `DiscoverOnInterface` signatures remain available
 for existing IP discovery callers.
 
-`Device` exposes `ReadDeviceDescriptor`, `ReadPropertyElementCount`, `ReadPropertyValue`,
+`Device` exposes `ReadDeviceDescriptor`, `ReadPropertyElementCount`, `ReadPropertyValue`, `WritePropertyValue`,
 `ReadPropertyDescriptionByID`, `ReadPropertyDescriptionByIndex`, `ReadInterfaceObjectType`, and
 `ReadInterfaceObjects`. The object list comes from device object 0, PID 71 (`PID_IO_LIST`); a device
 that does not implement that property will return an error. Property values remain raw bytes because
