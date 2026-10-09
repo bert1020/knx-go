@@ -38,7 +38,7 @@ func ListUSBDevices() ([]USBDevice, error) {
 		return nil, err
 	}
 	for i := range devices {
-		ctx, cancel := context.WithTimeout(context.Background(), 2500*time.Millisecond)
+		ctx, cancel := context.WithTimeout(context.Background(), 1500*time.Millisecond)
 		probeUSBDevice(ctx, &devices[i])
 		cancel()
 	}

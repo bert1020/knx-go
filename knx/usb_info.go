@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/vapourismo/knx-go/knx/cemi"
 )
@@ -82,18 +81,31 @@ func probeUSBDevice(ctx context.Context, device *USBDevice) {
 	}
 	defer u.Close()
 	read := func(pid uint8, expected int) []byte {
+		if ctx.Err() != nil {
+			return nil
+		}
 		value, err := u.ReadLocalProperty(ctx, usbDeviceObjectType, usbDeviceInstance, pid, 1, 1)
 		if err != nil || len(value) != expected {
 			if err == nil {
 				err = fmt.Errorf("expected %d bytes, got %d", expected, len(value))
 			}
-			if device.ProbeError != "" {
-				device.ProbeError += "; "
+			if device.ProbeError == "" {
+				device.ProbeError = fmt.Sprintf("property %d: %v", pid, err)
 			}
-			device.ProbeError += fmt.Sprintf("property %d: %v", pid, err)
 			return nil
 		}
 		return value
+	}
+	subnet := read(usbPIDSubnetAddress, 1)
+	if ctx.Err() != nil {
+		return
+	}
+	address := read(usbPIDDeviceAddress, 1)
+	if subnet != nil && address != nil {
+		device.IndividualAddress = cemi.IndividualAddr(uint16(subnet[0])<<8 | uint16(address[0]))
+	}
+	if ctx.Err() != nil {
+		return
 	}
 	if value := read(usbPIDManufacturer, 2); value != nil {
 		device.ManufacturerCode = binary.BigEndian.Uint16(value)
@@ -101,13 +113,10 @@ func probeUSBDevice(ctx context.Context, device *USBDevice) {
 			device.Manufacturer = fmt.Sprintf("KNX 0x%04X", device.ManufacturerCode)
 		}
 	}
-	subnet := read(usbPIDSubnetAddress, 1)
-	address := read(usbPIDDeviceAddress, 1)
-	if subnet != nil && address != nil {
-		device.IndividualAddress = cemi.IndividualAddr(uint16(subnet[0])<<8 | uint16(address[0]))
+	if ctx.Err() != nil {
+		return
 	}
 	if value := read(usbPIDMaxAPDULength, 2); value != nil {
 		device.MaxAPDULength = binary.BigEndian.Uint16(value)
 	}
-	device.ProbeError = strings.TrimSpace(device.ProbeError)
 }

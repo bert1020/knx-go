@@ -46,7 +46,7 @@ func TestDiscoverInterfacesLive(t *testing.T) {
 	seen := make(map[string]bool)
 	found := 0
 	scan := func(ifi *net.Interface) {
-		devices, err := DiscoverInterfacesOnInterface(ifi, multicast, timeout)
+		devices, err := DiscoverOnInterface(ifi, multicast, timeout)
 		if err != nil {
 			if ifi == nil {
 				t.Logf("default interface: %v", err)
@@ -54,33 +54,17 @@ func TestDiscoverInterfacesLive(t *testing.T) {
 				t.Logf("interface %s: %v", ifi.Name, err)
 			}
 		}
-		for _, device := range devices {
-			if device.Kind != InterfaceIPTunneling && device.Kind != InterfaceUSB {
+		for _, device := range combineDiscoveredInterfaces(devices, nil) {
+			if device.Kind != InterfaceIPTunneling {
 				continue
 			}
-			key := string(device.Kind) + "|" + device.Address
+			key := device.Address
 			if seen[key] {
 				continue
 			}
 			seen[key] = true
 			found++
-			if device.Kind == InterfaceUSB && device.USB != nil {
-				usb := device.USB
-				address, maxAPDU := "unknown", "unknown"
-				if usb.IndividualAddress != 0 {
-					address = usb.IndividualAddress.String()
-				}
-				if usb.MaxAPDULength != 0 {
-					maxAPDU = strconv.Itoa(int(usb.MaxAPDULength))
-				}
-				t.Logf("usb: name=%q manufacturer=%q manufacturer-code=0x%04X individual-address=%s max-apdu=%s path=%s",
-					usb.Name, usb.Manufacturer, usb.ManufacturerCode, address, maxAPDU, usb.Path)
-				if usb.ProbeError != "" {
-					t.Logf("usb %s details unavailable: %s", usb.Path, usb.ProbeError)
-				}
-			} else {
-				t.Logf("%s: %s (%s)", device.Kind, device.Name, device.Address)
-			}
+			t.Logf("%s: %s (%s)", device.Kind, device.Name, device.Address)
 		}
 	}
 	scanned := 0
@@ -95,8 +79,28 @@ func TestDiscoverInterfacesLive(t *testing.T) {
 	if scanned == 0 {
 		scan(nil)
 	}
-	if _, err := ListUSBDevices(); errors.Is(err, ErrUSBUnsupported) {
+	usbDevices, err := ListUSBDevices()
+	if errors.Is(err, ErrUSBUnsupported) {
 		t.Log("USB discovery is unsupported on this operating system")
+	} else if err != nil {
+		t.Logf("USB discovery: %v", err)
+	}
+	for _, usb := range usbDevices {
+		address, maxAPDU := "unknown", "unknown"
+		if usb.IndividualAddress != 0 {
+			address = usb.IndividualAddress.String()
+		}
+		if usb.MaxAPDULength != 0 {
+			maxAPDU = strconv.Itoa(int(usb.MaxAPDULength))
+		}
+		if usb.ProbeError != "" {
+			t.Logf("usb: name=%q manufacturer=%q manufacturer-code=0x%04X individual-address=%s max-apdu=%s path=%s details-error=%q",
+				usb.Name, usb.Manufacturer, usb.ManufacturerCode, address, maxAPDU, usb.Path, usb.ProbeError)
+		} else {
+			t.Logf("usb: name=%q manufacturer=%q manufacturer-code=0x%04X individual-address=%s max-apdu=%s path=%s",
+				usb.Name, usb.Manufacturer, usb.ManufacturerCode, address, maxAPDU, usb.Path)
+		}
+		found++
 	}
 	if found == 0 {
 		t.Log("no IP tunneling or USB interfaces found")
