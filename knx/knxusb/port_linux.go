@@ -1,38 +1,50 @@
 //go:build linux
 
-package knx
+package knxusb
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 )
 
-func listUSBDevices() ([]USBDevice, error) {
+// OpenPort opens a Linux hidraw device with plain blocking file I/O.
+func OpenPort(path string) (Port, error) {
+	f, err := os.OpenFile(path, os.O_RDWR, 0)
+	if err != nil {
+		return nil, fmt.Errorf("open KNX USB HID: %w", err)
+	}
+	return PortFile{f}, nil
+}
+
+// ListDevices enumerates hidraw devices whose report descriptor matches the
+// KNX USB usage page.
+func ListDevices() ([]Device, error) {
 	paths, err := filepath.Glob("/sys/class/hidraw/hidraw*/device/report_descriptor")
 	if err != nil {
 		return nil, err
 	}
-	var devices []USBDevice
+	var devices []Device
 	for _, path := range paths {
 		desc, err := os.ReadFile(path)
 		if err != nil || !bytes.Contains(desc, []byte{0x06, 0xa0, 0xff, 0x09, 0x01}) {
 			continue
 		}
 		name := filepath.Base(filepath.Dir(filepath.Dir(path)))
-		product, manufacturer := usbSysfsStrings(filepath.Dir(path))
+		product, manufacturer := sysfsStrings(filepath.Dir(path))
 		if product == "" {
 			product = "KNX USB"
 		}
-		devices = append(devices, USBDevice{Path: filepath.Join("/dev", name), Name: product, Manufacturer: manufacturer})
+		devices = append(devices, Device{Path: filepath.Join("/dev", name), Name: product, Manufacturer: manufacturer})
 	}
 	sort.Slice(devices, func(i, j int) bool { return devices[i].Path < devices[j].Path })
 	return devices, nil
 }
 
-func usbSysfsStrings(path string) (product, manufacturer string) {
+func sysfsStrings(path string) (product, manufacturer string) {
 	resolved, err := filepath.EvalSymlinks(path)
 	if err != nil {
 		return "", ""

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/vapourismo/knx-go/knx/knxnet"
@@ -40,13 +41,29 @@ func DiscoverInterfaces(multicastDiscoveryAddress string, searchTimeout time.Dur
 }
 
 // DiscoverInterfacesOnInterface uses the existing IP discovery on ifi and also
-// enumerates local USB HID interfaces.
+// enumerates local USB HID interfaces. Both run concurrently, since each one
+// waits for its own timeout.
 func DiscoverInterfacesOnInterface(ifi *net.Interface, multicastDiscoveryAddress string, searchTimeout time.Duration) ([]DiscoveredInterface, error) {
-	ip, ipErr := DiscoverOnInterface(ifi, multicastDiscoveryAddress, searchTimeout)
-	usb, usbErr := ListUSBDevices()
-	if errors.Is(usbErr, ErrUSBUnsupported) {
-		usbErr = nil
-	}
+	var (
+		wg     sync.WaitGroup
+		ip     []*knxnet.SearchRes
+		usb    []USBDevice
+		ipErr  error
+		usbErr error
+	)
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		ip, ipErr = DiscoverOnInterface(ifi, multicastDiscoveryAddress, searchTimeout)
+	}()
+	go func() {
+		defer wg.Done()
+		usb, usbErr = ListUSBDevices()
+		if errors.Is(usbErr, ErrUSBUnsupported) {
+			usbErr = nil
+		}
+	}()
+	wg.Wait()
 	result := combineDiscoveredInterfaces(ip, usb)
 	if ipErr != nil && usbErr != nil {
 		return result, fmt.Errorf("IP discovery: %v; USB discovery: %v", ipErr, usbErr)

@@ -6,39 +6,33 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"runtime"
 	"sync"
 	"time"
 
 	"github.com/vapourismo/knx-go/knx/cemi"
+	"github.com/vapourismo/knx-go/knx/knxusb"
 )
 
 // USBDevice identifies a KNX USB HID interface. Path is passed to NewUSB.
-// IndividualAddress and MaxAPDULength are zero when the device does not
-// provide them through local cEMI property reads.
-type USBDevice struct {
-	Path              string
-	Name              string
-	Manufacturer      string
-	ManufacturerCode  uint16
-	IndividualAddress cemi.IndividualAddr
-	MaxAPDULength     uint16
-	ProbeError        string
-}
+type USBDevice = knxusb.Device
 
 // ErrUSBUnsupported indicates that this operating system has no USB HID backend.
-var ErrUSBUnsupported = errors.New("KNX USB HID is currently supported on Windows and Linux")
+var ErrUSBUnsupported = knxusb.ErrUnsupported
+
+// Timed-out writes are retried at most this many times. A timed-out report
+// was not delivered to the interface, so retrying it is safe.
+const usbWriteAttempts = 8
 
 // ListUSBDevices discovers KNX HID interfaces and reads local device details
 // when the interface is available. Devices remain listed if probing fails.
 func ListUSBDevices() ([]USBDevice, error) {
-	devices, err := listUSBDevices()
+	devices, err := knxusb.ListDevices()
 	if err != nil {
 		return nil, err
 	}
 	for i := range devices {
-		ctx, cancel := context.WithTimeout(context.Background(), 1500*time.Millisecond)
+		ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
 		probeUSBDevice(ctx, &devices[i])
 		cancel()
 	}
@@ -48,7 +42,7 @@ func ListUSBDevices() ([]USBDevice, error) {
 // USB provides the same cEMI Send/Inbound interface as Tunnel and Router.
 // It supports cEMI-capable KNX USB HID interfaces on Windows and Linux.
 type USB struct {
-	file    *os.File
+	file    knxusb.Port
 	inbound chan cemi.Message
 	done    chan struct{}
 	once    sync.Once
@@ -64,13 +58,13 @@ func NewUSB(ctx context.Context, path string) (*USB, error) {
 	if path == "" {
 		return nil, errors.New("USB HID path is empty")
 	}
-	f, err := os.OpenFile(path, os.O_RDWR, 0)
+	port, err := knxusb.OpenPort(path)
 	if err != nil {
-		return nil, fmt.Errorf("open KNX USB HID: %w", err)
+		return nil, err
 	}
-	u := &USB{file: f, inbound: make(chan cemi.Message, 64), done: make(chan struct{})}
+	u := &USB{file: port, inbound: make(chan cemi.Message, 64), done: make(chan struct{})}
 	if err := u.write(0x0f, 0x01, []byte{0x01}); err != nil {
-		f.Close()
+		port.Close()
 		return nil, err
 	}
 	ready := make(chan error, 1)
@@ -94,15 +88,24 @@ func NewUSB(ctx context.Context, path string) (*USB, error) {
 }
 
 func (u *USB) write(protocol, service byte, body []byte) error {
-	reports, err := usbEncode(protocol, service, body)
+	reports, err := knxusb.Encode(protocol, service, body)
 	if err != nil {
 		return err
 	}
 	u.writeMu.Lock()
 	defer u.writeMu.Unlock()
 	for _, report := range reports {
-		if _, err := u.file.Write(report); err != nil {
-			return err
+		for attempt := 1; ; attempt++ {
+			select {
+			case <-u.done:
+				return errors.New("USB is closed")
+			default:
+			}
+			if _, err := u.file.Write(report); err == nil {
+				break
+			} else if !errors.Is(err, knxusb.ErrWriteTimeout) || attempt >= usbWriteAttempts {
+				return err
+			}
 		}
 	}
 	return nil
@@ -110,10 +113,10 @@ func (u *USB) write(protocol, service byte, body []byte) error {
 
 func (u *USB) read(ready chan<- error) {
 	defer close(u.inbound)
-	var assembler usbAssembler
+	var assembler knxusb.Assembler
 	negotiated := false
 	for {
-		report := make([]byte, usbReportSize)
+		report := make([]byte, knxusb.ReportSize)
 		_, err := io.ReadFull(u.file, report)
 		if err != nil {
 			if !negotiated {
@@ -125,8 +128,8 @@ func (u *USB) read(ready chan<- error) {
 		if err != nil || !complete {
 			continue
 		}
-		if !negotiated && packet.protocol == 0x0f && packet.service == 0x02 && len(packet.body) >= 3 && packet.body[0] == 0x01 {
-			if binary.BigEndian.Uint16(packet.body[1:3])&4 == 0 {
+		if !negotiated && packet.Protocol == 0x0f && packet.Service == 0x02 && len(packet.Body) >= 3 && packet.Body[0] == 0x01 {
+			if binary.BigEndian.Uint16(packet.Body[1:3])&4 == 0 {
 				ready <- errors.New("USB interface does not support cEMI")
 				return
 			}
@@ -138,11 +141,11 @@ func (u *USB) read(ready chan<- error) {
 			ready <- nil
 			continue
 		}
-		if packet.protocol != 1 || packet.service != 3 || len(packet.body) == 0 {
+		if packet.Protocol != 1 || packet.Service != 3 || len(packet.Body) == 0 {
 			continue
 		}
 		var msg cemi.Message
-		if _, err := safeUSBUnpack(packet.body, &msg); err != nil {
+		if _, err := safeUSBUnpack(packet.Body, &msg); err != nil {
 			continue
 		}
 		select {
@@ -183,7 +186,11 @@ func (u *USB) Send(msg cemi.Message) error {
 func (u *USB) Inbound() <-chan cemi.Message { return u.inbound }
 
 func (u *USB) Close() {
-	u.once.Do(func() { close(u.done); u.file.Close() })
+	u.once.Do(func() {
+		close(u.done)
+		u.file.Cancel()
+		u.file.Close()
+	})
 }
 
 // GroupUSB exposes group telegrams using the same API as GroupTunnel.

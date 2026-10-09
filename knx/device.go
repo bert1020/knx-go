@@ -20,6 +20,7 @@ const (
 	apciPropertyDescriptionRead     = 0x3d8
 	apciPropertyDescriptionResponse = 0x3d9
 	PIDObjectType                   = 1
+	PIDDeviceManufacturer           = 12
 	PIDIOList                       = 71
 )
 
@@ -156,7 +157,10 @@ func (d *Device) send(unit cemi.TransportUnit) error {
 		return errors.New("cEMI connection is closed")
 	default:
 	}
-	control := cemi.Control1NoRepeat | cemi.Control1NoSysBroadcast | cemi.Control1WantAck | cemi.Control1Prio(cemi.PrioSystem)
+	// The ack request bit must stay clear: devices do not answer management
+	// frames that request a link-layer ack (verified against a SeaWin device
+	// and by ETS, which never sets the bit either).
+	control := cemi.Control1NoRepeat | cemi.Control1NoSysBroadcast | cemi.Control1Prio(cemi.PrioSystem)
 	if unit.Size() <= 17 {
 		control |= cemi.Control1StdFrame
 	}
@@ -231,7 +235,16 @@ func (d *Device) request(ctx context.Context, code, expected uint16, payload []b
 					return nil, errors.New("device rejected transport packet")
 				}
 			case *cemi.AppData:
-				if apci(unit) != expected {
+				// Escape-APCI responses carry the 10-bit APCI cleanly in
+				// Command and Data[0]. Other responses share the first data
+				// byte with APCI bits 5:0, so only the Command part must
+				// match and Data[0] is response payload, not APCI.
+				isEscape := unit.Command == cemi.Escape
+				if isEscape {
+					if apci(unit) != expected {
+						continue
+					}
+				} else if apci(unit)&0x3c0 != expected&0x3c0 {
 					continue
 				}
 				if d.connected {
@@ -244,7 +257,10 @@ func (d *Device) request(ctx context.Context, code, expected uint16, payload []b
 					d.receiveSequence = (d.receiveSequence + 1) & 15
 					d.sequence = (d.sequence + 1) & 15
 				}
-				return append([]byte(nil), unit.Data[1:]...), nil
+				if isEscape {
+					return append([]byte(nil), unit.Data[1:]...), nil
+				}
+				return append([]byte(nil), unit.Data...), nil
 			}
 		}
 	}
@@ -256,10 +272,12 @@ func (d *Device) ReadDeviceDescriptor(ctx context.Context) (uint16, error) {
 	if err != nil {
 		return 0, err
 	}
-	if len(data) < 2 {
+	// The response carries the descriptor type byte first, then the two
+	// mask version bytes.
+	if len(data) < 3 {
 		return 0, errors.New("short device descriptor response")
 	}
-	return binary.BigEndian.Uint16(data), nil
+	return binary.BigEndian.Uint16(data[1:3]), nil
 }
 
 // ReadPropertyValue reads 1..15 elements of an interface object property.
@@ -314,6 +332,20 @@ func (d *Device) WritePropertyValue(ctx context.Context, objectIndex, propertyID
 		return errors.New("property write response does not match request")
 	}
 	return nil
+}
+
+// WriteDeviceManufacturer writes the manufacturer code of the device object
+// (object 0, property 12). It fails and leaves the device unchanged when the
+// property is not write enabled or the device rejects the write.
+func (d *Device) WriteDeviceManufacturer(ctx context.Context, code uint16) error {
+	desc, err := d.ReadPropertyDescriptionByID(ctx, 0, PIDDeviceManufacturer)
+	if err != nil {
+		return fmt.Errorf("manufacturer code property description: %w", err)
+	}
+	if !desc.WriteEnabled {
+		return errors.New("manufacturer code property is write protected")
+	}
+	return d.WritePropertyValue(ctx, 0, PIDDeviceManufacturer, 1, 1, []byte{byte(code >> 8), byte(code)})
 }
 
 func (d *Device) ReadPropertyElementCount(ctx context.Context, objectIndex, propertyID uint8) (uint16, error) {
