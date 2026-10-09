@@ -15,6 +15,8 @@ var (
 	hidPreparsed = hidDLL.NewProc("HidD_GetPreparsedData")
 	hidFree      = hidDLL.NewProc("HidD_FreePreparsedData")
 	hidCaps      = hidDLL.NewProc("HidP_GetCaps")
+	hidProduct   = hidDLL.NewProc("HidD_GetProductString")
+	hidMaker     = hidDLL.NewProc("HidD_GetManufacturerString")
 	setupGet     = setupDLL.NewProc("SetupDiGetClassDevsW")
 	setupEnum    = setupDLL.NewProc("SetupDiEnumDeviceInterfaces")
 	setupDetail  = setupDLL.NewProc("SetupDiGetDeviceInterfaceDetailW")
@@ -59,36 +61,52 @@ func listUSBDevices() ([]USBDevice, error) {
 			continue
 		}
 		path := syscall.UTF16ToString((*[1 << 15]uint16)(unsafe.Pointer(&buf[4]))[:(len(buf)-4)/2])
-		if !isKNXHID(path) {
+		name, manufacturer, knxDevice := knxHIDStrings(path)
+		if !knxDevice {
 			continue
 		}
-		devices = append(devices, USBDevice{Path: path, Name: path})
+		if name == "" {
+			name = "KNX USB"
+		}
+		devices = append(devices, USBDevice{Path: path, Name: name, Manufacturer: manufacturer})
 	}
 	return devices, nil
 }
 
-func isKNXHID(path string) bool {
+func knxHIDStrings(path string) (name, manufacturer string, ok bool) {
 	p, err := syscall.UTF16PtrFromString(path)
 	if err != nil {
-		return false
+		return "", "", false
 	}
 	h, err := syscall.CreateFile(p, 0, syscall.FILE_SHARE_READ|syscall.FILE_SHARE_WRITE, nil, syscall.OPEN_EXISTING, 0, 0)
 	if err != nil {
-		return false
+		return "", "", false
 	}
 	defer syscall.CloseHandle(h)
 	var parsed uintptr
-	ok, _, _ := hidPreparsed.Call(uintptr(h), uintptr(unsafe.Pointer(&parsed)))
-	if ok == 0 {
-		return false
+	result, _, _ := hidPreparsed.Call(uintptr(h), uintptr(unsafe.Pointer(&parsed)))
+	if result == 0 {
+		return "", "", false
 	}
 	defer hidFree.Call(parsed)
 	var caps [64]byte
 	status, _, _ := hidCaps.Call(parsed, uintptr(unsafe.Pointer(&caps[0])))
 	if int32(status) < 0 {
-		return false
+		return "", "", false
 	}
 	usage := *(*uint16)(unsafe.Pointer(&caps[0]))
 	page := *(*uint16)(unsafe.Pointer(&caps[2]))
-	return page == 0xffa0 && usage == 1
+	if page != 0xffa0 || usage != 1 {
+		return "", "", false
+	}
+	return hidString(h, hidProduct), hidString(h, hidMaker), true
+}
+
+func hidString(handle syscall.Handle, proc *syscall.LazyProc) string {
+	var chars [128]uint16
+	ok, _, _ := proc.Call(uintptr(handle), uintptr(unsafe.Pointer(&chars[0])), uintptr(unsafe.Sizeof(chars)))
+	if ok == 0 {
+		return ""
+	}
+	return syscall.UTF16ToString(chars[:])
 }

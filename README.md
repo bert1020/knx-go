@@ -39,7 +39,9 @@ For a writable property, pass its object index, property ID, element count, star
 encoded value bytes to `device.WritePropertyValue(ctx, objectIndex, propertyID, count, startIndex,
 value)`. A successful call waits for and validates the device's property response.
 
-For USB, call `ListUSBDevices()`, open a returned path with `NewUSB(ctx, path)`, then call
+For USB, call `ListUSBDevices()` to get the product name, manufacturer, individual address,
+maximum APDU length, and HID path. Properties that the interface cannot provide stay zero;
+`ProbeError` explains unavailable local details. Open a returned path with `NewUSB(ctx, path)`, then call
 `usb.OpenDevice(ctx, address)`. An existing `Router` can call
 `router.OpenDevice(ctx, source, address)`; routing requires a physical source address reserved for
 the client. `OpenDeviceConnectionless` provides unnumbered management for devices that reject a

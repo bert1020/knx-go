@@ -3,7 +3,7 @@ package knx
 import (
 	"errors"
 	"net"
-	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -35,11 +35,8 @@ func TestCombineDiscoveredInterfaces(t *testing.T) {
 	}
 }
 
-// Run with: KNX_DISCOVER_LIVE=1 go test ./knx -run '^TestDiscoverInterfacesLive$' -v
+// Run with: go test ./knx -run '^TestDiscoverInterfacesLive$' -v -count=1
 func TestDiscoverInterfacesLive(t *testing.T) {
-	if os.Getenv("KNX_DISCOVER_LIVE") != "1" {
-		t.Skip("set KNX_DISCOVER_LIVE=1 to scan local KNX interfaces")
-	}
 	const multicast = "224.0.23.12:3671"
 	const timeout = 2 * time.Second
 	ifaces, err := net.Interfaces()
@@ -67,7 +64,23 @@ func TestDiscoverInterfacesLive(t *testing.T) {
 			}
 			seen[key] = true
 			found++
-			t.Logf("%s: %s (%s)", device.Kind, device.Name, device.Address)
+			if device.Kind == InterfaceUSB && device.USB != nil {
+				usb := device.USB
+				address, maxAPDU := "unknown", "unknown"
+				if usb.IndividualAddress != 0 {
+					address = usb.IndividualAddress.String()
+				}
+				if usb.MaxAPDULength != 0 {
+					maxAPDU = strconv.Itoa(int(usb.MaxAPDULength))
+				}
+				t.Logf("usb: name=%q manufacturer=%q manufacturer-code=0x%04X individual-address=%s max-apdu=%s path=%s",
+					usb.Name, usb.Manufacturer, usb.ManufacturerCode, address, maxAPDU, usb.Path)
+				if usb.ProbeError != "" {
+					t.Logf("usb %s details unavailable: %s", usb.Path, usb.ProbeError)
+				}
+			} else {
+				t.Logf("%s: %s (%s)", device.Kind, device.Name, device.Address)
+			}
 		}
 	}
 	scanned := 0

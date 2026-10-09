@@ -15,13 +15,35 @@ import (
 )
 
 // USBDevice identifies a KNX USB HID interface. Path is passed to NewUSB.
-type USBDevice struct{ Path, Name string }
+// IndividualAddress and MaxAPDULength are zero when the device does not
+// provide them through local cEMI property reads.
+type USBDevice struct {
+	Path              string
+	Name              string
+	Manufacturer      string
+	ManufacturerCode  uint16
+	IndividualAddress cemi.IndividualAddr
+	MaxAPDULength     uint16
+	ProbeError        string
+}
 
 // ErrUSBUnsupported indicates that this operating system has no USB HID backend.
 var ErrUSBUnsupported = errors.New("KNX USB HID is currently supported on Windows and Linux")
 
-// ListUSBDevices discovers interfaces with the KNX HID usage page.
-func ListUSBDevices() ([]USBDevice, error) { return listUSBDevices() }
+// ListUSBDevices discovers KNX HID interfaces and reads local device details
+// when the interface is available. Devices remain listed if probing fails.
+func ListUSBDevices() ([]USBDevice, error) {
+	devices, err := listUSBDevices()
+	if err != nil {
+		return nil, err
+	}
+	for i := range devices {
+		ctx, cancel := context.WithTimeout(context.Background(), 2500*time.Millisecond)
+		probeUSBDevice(ctx, &devices[i])
+		cancel()
+	}
+	return devices, nil
+}
 
 // USB provides the same cEMI Send/Inbound interface as Tunnel and Router.
 // It supports cEMI-capable KNX USB HID interfaces on Windows and Linux.
@@ -31,6 +53,7 @@ type USB struct {
 	done    chan struct{}
 	once    sync.Once
 	writeMu sync.Mutex
+	localMu sync.Mutex
 }
 
 // NewUSB opens a KNX USB HID interface and negotiates cEMI mode.
