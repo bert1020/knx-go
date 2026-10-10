@@ -1,6 +1,7 @@
 package knx
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"errors"
@@ -14,14 +15,20 @@ import (
 const (
 	apciDeviceDescriptorRead        = 0x300
 	apciDeviceDescriptorResponse    = 0x340
+	apciMemoryRead                  = 0x200
+	apciMemoryResponse              = 0x240
+	apciMemoryWrite                 = 0x280
 	apciPropertyValueRead           = 0x3d5
 	apciPropertyValueResponse       = 0x3d6
 	apciPropertyValueWrite          = 0x3d7
 	apciPropertyDescriptionRead     = 0x3d8
 	apciPropertyDescriptionResponse = 0x3d9
 	PIDObjectType                   = 1
+	PIDMaskVersion                  = 11
 	PIDDeviceManufacturer           = 12
 	PIDIOList                       = 71
+	PIDSerialNumber                 = 51
+	PIDHardwareType                 = 78
 )
 
 // Device is a session addressed by a KNX individual (physical) address.
@@ -425,4 +432,51 @@ func (d *Device) ReadInterfaceObjects(ctx context.Context) ([]InterfaceObject, e
 		objects = append(objects, InterfaceObject{Index: uint8(i - 1), Type: binary.BigEndian.Uint16(data)})
 	}
 	return objects, nil
+}
+
+// ReadMemory reads 1..63 octets of memory starting at address. The A_Memory
+// protocol limits the octet counter to six bits. Requests larger than a
+// standard frame use extended framing automatically.
+func (d *Device) ReadMemory(ctx context.Context, address uint16, count uint8) ([]byte, error) {
+	if count == 0 || count > 63 {
+		return nil, errors.New("memory read count must be 1..63")
+	}
+	data, err := d.request(ctx, apciMemoryRead, apciMemoryResponse, []byte{count, byte(address >> 8), byte(address)})
+	if err != nil {
+		return nil, err
+	}
+	if len(data) < 3 {
+		return nil, errors.New("short memory read response")
+	}
+	if data[0] != count || uint16(data[1])<<8|uint16(data[2]) != address {
+		return nil, errors.New("memory read response does not match request")
+	}
+	if len(data) < 3+int(count) {
+		return nil, errors.New("short memory read payload")
+	}
+	return append([]byte(nil), data[3:3+count]...), nil
+}
+
+// WriteMemory writes 1..63 octets of data to memory starting at address. The
+// device echoes the written octets; the write is only acknowledged when the
+// echo matches the request.
+func (d *Device) WriteMemory(ctx context.Context, address uint16, data []byte) error {
+	if len(data) == 0 || len(data) > 63 {
+		return errors.New("memory write data must contain 1..63 octets")
+	}
+	payload := append([]byte{byte(len(data)), byte(address >> 8), byte(address)}, data...)
+	resp, err := d.request(ctx, apciMemoryWrite, apciMemoryResponse, payload)
+	if err != nil {
+		return err
+	}
+	if len(resp) < 3 {
+		return errors.New("short memory write response")
+	}
+	if resp[0] != byte(len(data)) || uint16(resp[1])<<8|uint16(resp[2]) != address {
+		return errors.New("memory write response does not match request")
+	}
+	if !bytes.Equal(resp[3:], data) {
+		return errors.New("memory write response does not echo written data")
+	}
+	return nil
 }
