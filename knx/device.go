@@ -23,6 +23,15 @@ const (
 	apciPropertyValueWrite          = 0x3d7
 	apciPropertyDescriptionRead     = 0x3d8
 	apciPropertyDescriptionResponse = 0x3d9
+	apciFunctionPropertyCommand     = 0x3de
+	apciFunctionPropertyStateRead   = 0x3df
+	apciFunctionPropertyStateResp   = 0x3e0
+	// Vendor APCI pair used by some vendor devices (e.g. RS485 gateways,
+	// manufacturer 0x014B) for function-property style exchanges. Both ETS and
+	// the vendor tooling were observed on the bus using 0x2C8/0x2C9; the
+	// standard escape pair 0x3DF/0x3E0 is silently ignored by those devices.
+	vendorFunctionPropertyStateRead = 0x2c8
+	vendorFunctionPropertyStateResp = 0x2c9
 	PIDObjectType                   = 1
 	PIDMaskVersion                  = 11
 	PIDDeviceManufacturer           = 12
@@ -168,7 +177,11 @@ func (d *Device) send(unit cemi.TransportUnit) error {
 	// frames that request a link-layer ack (verified against a SeaWin device
 	// and by ETS, which never sets the bit either).
 	control := cemi.Control1NoRepeat | cemi.Control1NoSysBroadcast | cemi.Control1Prio(cemi.PrioSystem)
-	if unit.Size() <= 17 {
+	// Extended APCI (escape coding) must be sent in extended frame format:
+	// the Extended Frame Format bit stays clear, or devices silently drop the frame.
+	if app, ok := unit.(*cemi.AppData); ok && app.Command == cemi.Escape {
+		// keep EFF (do not set Control1StdFrame)
+	} else if unit.Size() <= 17 {
 		control |= cemi.Control1StdFrame
 	}
 	frame := &cemi.LDataReq{LData: cemi.LData{
@@ -339,6 +352,86 @@ func (d *Device) WritePropertyValue(ctx context.Context, objectIndex, propertyID
 		return errors.New("property write response does not match request")
 	}
 	return nil
+}
+
+// ExchangePropertyValue writes 1..15 elements like WritePropertyValue but
+// returns the raw element data of the property response instead of requiring
+// an exact echo. Devices that run a request/response protocol inside a
+// property answer with data that differs from the written value.
+func (d *Device) ExchangePropertyValue(ctx context.Context, objectIndex, propertyID, count uint8, startIndex uint16, value []byte) ([]byte, error) {
+	if count == 0 || count > 15 || startIndex == 0 || startIndex > 0x0fff {
+		return nil, errors.New("invalid property count or start index")
+	}
+	if len(value) == 0 || len(value) > 250 {
+		return nil, errors.New("property value must contain 1..250 bytes")
+	}
+	request := make([]byte, 4, 4+len(value))
+	request[0], request[1] = objectIndex, propertyID
+	request[2], request[3] = count<<4|byte(startIndex>>8), byte(startIndex)
+	request = append(request, value...)
+	data, err := d.request(ctx, apciPropertyValueWrite, apciPropertyValueResponse, request)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) < 4 || data[0] != objectIndex || data[1] != propertyID {
+		return nil, errors.New("invalid property write response")
+	}
+	if data[2]>>4 == 0 {
+		return nil, fmt.Errorf("property %d on object %d rejected the write", propertyID, objectIndex)
+	}
+	return append([]byte(nil), data[4:]...), nil
+}
+
+// ReadFunctionPropertyState invokes A_FunctionProperty_StateRead on the given
+// function property and returns the response's return code together with the
+// response data. Both object index and property ID are echoed by the device;
+// the request data follows them verbatim. A non-zero return code means the
+// device processed the request but rejected it; the data may still be present.
+func (d *Device) ReadFunctionPropertyState(ctx context.Context, objectIndex, propertyID uint8, data []byte) (uint8, []byte, error) {
+	request := append([]byte{objectIndex, propertyID}, data...)
+	response, err := d.request(ctx, apciFunctionPropertyStateRead, apciFunctionPropertyStateResp, request)
+	if err != nil {
+		return 0, nil, err
+	}
+	if len(response) < 3 || response[0] != objectIndex || response[1] != propertyID {
+		return 0, nil, errors.New("invalid function property response")
+	}
+	return response[2], append([]byte(nil), response[3:]...), nil
+}
+
+// WriteFunctionPropertyCommand invokes A_FunctionProperty_Command on the given
+// function property and returns the response's return code together with the
+// response data. Some devices only implement the command variant of function
+// property access; the response format matches A_FunctionProperty_StateRead.
+func (d *Device) WriteFunctionPropertyCommand(ctx context.Context, objectIndex, propertyID uint8, data []byte) (uint8, []byte, error) {
+	request := append([]byte{objectIndex, propertyID}, data...)
+	response, err := d.request(ctx, apciFunctionPropertyCommand, apciFunctionPropertyStateResp, request)
+	if err != nil {
+		return 0, nil, err
+	}
+	if len(response) < 3 || response[0] != objectIndex || response[1] != propertyID {
+		return 0, nil, errors.New("invalid function property response")
+	}
+	return response[2], append([]byte(nil), response[3:]...), nil
+}
+
+// ReadVendorPropertyState exchanges a function-property style state request
+// using the vendor-specific APCI pair 0x2C8/0x2C9. The request and response
+// payloads match A_FunctionProperty_StateRead: [objectIndex][propertyID] plus
+// the request data, answered by [objectIndex][propertyID][returnCode][data].
+// Unlike the escape-coded pair, the response's first data byte holds the low
+// APCI bits (0x09 for 0x2C9) instead of payload, so it is stripped here and
+// the echoed object/property follow at offsets 1 and 2.
+func (d *Device) ReadVendorPropertyState(ctx context.Context, objectIndex, propertyID uint8, data []byte) (uint8, []byte, error) {
+	request := append([]byte{objectIndex, propertyID}, data...)
+	response, err := d.request(ctx, vendorFunctionPropertyStateRead, vendorFunctionPropertyStateResp, request)
+	if err != nil {
+		return 0, nil, err
+	}
+	if len(response) < 4 || response[1] != objectIndex || response[2] != propertyID {
+		return 0, nil, errors.New("invalid vendor property response")
+	}
+	return response[3], append([]byte(nil), response[4:]...), nil
 }
 
 // WriteDeviceManufacturer writes the manufacturer code of the device object
