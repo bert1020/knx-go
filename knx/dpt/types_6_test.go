@@ -16,5 +16,5 @@ func TestDPT_6010(t *testing.T) {
 
 	assert.Equal(t, knxValue, dptValue.Pack())
 
-	assert.Equal(t, "42 counter pulses", dptValue.String())
+	assert.Equal(t, "42", dptValue.String())
 }
