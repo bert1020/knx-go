@@ -231,8 +231,24 @@ func (d *Device) request(ctx context.Context, code, expected uint16, payload []b
 		return nil, err
 	}
 	app := &cemi.AppData{Numbered: d.connected, SeqNumber: d.sequence, Command: cemi.APCI(code >> 6), Data: append([]byte{byte(code & 0x3f)}, payload...)}
-	if err := d.send(app); err != nil {
-		return nil, err
+	// d.send relays through the tunnel's requestTunnel, whose resend loop runs
+	// on its own ResponseTimeout (default 10s) and does not honor ctx. Run it in
+	// a goroutine so the caller's deadline (e.g. a short management timeout)
+	// also bounds the sending phase; an abandoned requestTunnel is bounded by
+	// ResponseTimeout and released when the tunnel closes.
+	sendErr := make(chan error, 1)
+	go func() { sendErr <- d.send(app) }()
+	select {
+	case err := <-sendErr:
+		if err != nil {
+			return nil, err
+		}
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-d.done:
+		return nil, errors.New("device is closed")
+	case <-d.linkDone:
+		return nil, errors.New("cEMI connection is closed")
 	}
 	for {
 		select {
