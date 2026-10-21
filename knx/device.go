@@ -119,6 +119,23 @@ func openDevice(ctx context.Context, link deviceConnection, source, address cemi
 		d.Close()
 		return nil, err
 	}
+	// A device that already has a transport connection answers the first
+	// T_Connect with T_Disconnect. Wait briefly, then connect once more.
+	select {
+	case frame := <-d.inbound:
+		if frame != nil {
+			if unit, ok := frame.Data.(*cemi.ControlData); ok && !unit.Numbered && unit.Command == 1 {
+				if err := d.send(&cemi.ControlData{Command: 0}); err != nil {
+					d.Close()
+					return nil, err
+				}
+			}
+		}
+	case <-time.After(400 * time.Millisecond):
+	case <-ctx.Done():
+		d.Close()
+		return nil, ctx.Err()
+	}
 	if _, err := d.ReadDeviceDescriptor(ctx); err != nil {
 		d.Close()
 		return nil, fmt.Errorf("connect to %s: %w", address, err)

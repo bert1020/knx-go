@@ -40,7 +40,8 @@ func ListUSBDevices() ([]USBDevice, error) {
 }
 
 // USB provides the same cEMI Send/Inbound interface as Tunnel and Router.
-// It supports cEMI-capable KNX USB HID interfaces on Windows and Linux.
+// Interfaces that speak cEMI are used directly. EMI1-only interfaces are
+// switched to link-layer mode and their L_Data frames are translated to cEMI.
 type USB struct {
 	file    knxusb.Port
 	inbound chan cemi.Message
@@ -48,9 +49,12 @@ type USB struct {
 	once    sync.Once
 	writeMu sync.Mutex
 	localMu sync.Mutex
+	conMu   sync.Mutex
+	conCh   chan error
+	emi     byte // 0x01 EMI1 or 0x03 cEMI, set before NewUSB returns
 }
 
-// NewUSB opens a KNX USB HID interface and negotiates cEMI mode.
+// NewUSB opens a KNX USB HID interface and negotiates cEMI or EMI1 mode.
 func NewUSB(ctx context.Context, path string) (*USB, error) {
 	if runtime.GOOS != "windows" && runtime.GOOS != "linux" {
 		return nil, ErrUSBUnsupported
@@ -111,6 +115,24 @@ func (u *USB) write(protocol, service byte, body []byte) error {
 	return nil
 }
 
+// selectEMI picks cEMI when the interface offers it, otherwise EMI1.
+// EMI1 also needs PC_SET_VAL.req (address 0x0060, value 0x12) to enter link layer.
+func (u *USB) selectEMI(mask uint16) error {
+	switch {
+	case mask&4 != 0:
+		u.emi = 0x03
+		return u.write(0x0f, 0x03, []byte{0x05, 0x03})
+	case mask&1 != 0:
+		u.emi = 0x01
+		if err := u.write(0x0f, 0x03, []byte{0x05, 0x01}); err != nil {
+			return err
+		}
+		return u.write(0x01, 0x01, []byte{0x46, 0x01, 0x00, 0x60, 0x12})
+	default:
+		return errors.New("USB interface supports neither cEMI nor EMI1")
+	}
+}
+
 func (u *USB) read(ready chan<- error) {
 	defer close(u.inbound)
 	var assembler knxusb.Assembler
@@ -129,30 +151,61 @@ func (u *USB) read(ready chan<- error) {
 			continue
 		}
 		if !negotiated && packet.Protocol == 0x0f && packet.Service == 0x02 && len(packet.Body) >= 3 && packet.Body[0] == 0x01 {
-			if binary.BigEndian.Uint16(packet.Body[1:3])&4 == 0 {
-				ready <- errors.New("USB interface does not support cEMI")
-				return
-			}
-			if err := u.write(0x0f, 0x03, []byte{0x05, 0x03}); err != nil {
+			if err := u.selectEMI(binary.BigEndian.Uint16(packet.Body[1:3])); err != nil {
 				ready <- err
 				return
 			}
+			// EMI1 interfaces often accept PC_SET_VAL.req without sending PC_SET_VAL.con.
 			negotiated = true
 			ready <- nil
 			continue
 		}
-		if packet.Protocol != 1 || packet.Service != 3 || len(packet.Body) == 0 {
+		if !negotiated || packet.Protocol != 0x01 || packet.Service != u.emi || len(packet.Body) == 0 {
 			continue
 		}
+		raw := packet.Body
+		if u.emi == 0x01 {
+			raw, err = emi1ToCEMI(packet.Body)
+			if err != nil {
+				continue
+			}
+		}
 		var msg cemi.Message
-		if _, err := safeUSBUnpack(packet.Body, &msg); err != nil {
+		if _, err := safeUSBUnpack(raw, &msg); err != nil {
 			continue
+		}
+		// ETS waits for L_Data.con before sending the next EMI1 frame.
+		// Forwarding it would let the next request overlap this one and the
+		// device answers with T_Disconnect.
+		if u.emi == 0x01 {
+			if con, ok := msg.(*cemi.LDataCon); ok {
+				var conErr error
+				if con.Control1&cemi.Control1HasError != 0 {
+					conErr = errors.New("EMI1 L_Data.con reported an error")
+				}
+				u.finishCon(conErr)
+				continue
+			}
 		}
 		select {
 		case u.inbound <- msg:
 		case <-u.done:
 			return
 		}
+	}
+}
+
+func (u *USB) finishCon(err error) {
+	u.conMu.Lock()
+	ch := u.conCh
+	u.conCh = nil
+	u.conMu.Unlock()
+	if ch == nil {
+		return
+	}
+	select {
+	case ch <- err:
+	default:
 	}
 }
 
@@ -180,7 +233,34 @@ func (u *USB) Send(msg cemi.Message) error {
 	}
 	frame := make([]byte, cemi.Size(msg))
 	cemi.Pack(frame, msg)
-	return u.write(1, 3, frame)
+	if u.emi == 0x01 {
+		emi, err := cemiToEMI1(frame)
+		if err != nil {
+			return err
+		}
+		ch := make(chan error, 1)
+		u.conMu.Lock()
+		u.conCh = ch
+		u.conMu.Unlock()
+		if err := u.write(0x01, 0x01, emi); err != nil {
+			u.finishCon(nil)
+			return err
+		}
+		select {
+		case err := <-ch:
+			return err
+		case <-u.done:
+			return errors.New("USB is closed")
+		case <-time.After(2 * time.Second):
+			u.conMu.Lock()
+			if u.conCh == ch {
+				u.conCh = nil
+			}
+			u.conMu.Unlock()
+			return errors.New("EMI1 L_Data.con timed out")
+		}
+	}
+	return u.write(0x01, 0x03, frame)
 }
 
 func (u *USB) Inbound() <-chan cemi.Message { return u.inbound }

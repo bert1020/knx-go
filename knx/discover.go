@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/vapourismo/knx-go/knx/knxnet"
-	"golang.org/x/net/ipv4"
 )
 
 // InterfaceKind identifies the transport supported by a discovered interface.
@@ -129,18 +128,54 @@ func Discover(multicastDiscoveryAddress string, searchTimeout time.Duration) ([]
 	return DiscoverOnInterface(nil, multicastDiscoveryAddress, searchTimeout)
 }
 
-// interfaceIPv4 返回网卡的 IPv4 地址,无则返回 nil。
+// interfaceIPv4 返回网卡的第一个 IPv4 地址,无则返回 nil。
 func interfaceIPv4(ifi *net.Interface) net.IP {
+	ips := interfaceIPv4s(ifi)
+	if len(ips) == 0 {
+		return nil
+	}
+	return ips[0]
+}
+
+// interfaceIPv4s 返回网卡上全部可用于发现的 IPv4。
+// 同一张网卡配了多个地址时（例如 192.168.2.188 和 192.168.123.188），
+// 只从第一个地址发 SEARCH_REQUEST 会漏掉其它网段上的网关。
+func interfaceIPv4s(ifi *net.Interface) []net.IP {
+	if ifi == nil {
+		return nil
+	}
 	addrs, err := ifi.Addrs()
 	if err != nil {
 		return nil
 	}
+	seen := map[string]struct{}{}
+	var all, unicast []net.IP
 	for _, addr := range addrs {
-		if ipNet, ok := addr.(*net.IPNet); ok && ipNet.IP.To4() != nil {
-			return ipNet.IP.To4()
+		var ip net.IP
+		switch a := addr.(type) {
+		case *net.IPNet:
+			ip = a.IP.To4()
+		case *net.IPAddr:
+			ip = a.IP.To4()
+		}
+		if ip == nil {
+			continue
+		}
+		ip = append(net.IP(nil), ip...)
+		key := ip.String()
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		all = append(all, ip)
+		if ip.IsGlobalUnicast() {
+			unicast = append(unicast, ip)
 		}
 	}
-	return nil
+	if len(unicast) > 0 {
+		return unicast
+	}
+	return all
 }
 
 // DiscoverOnInterface discovers all KNXnet/IP servers on a specific interface. If the
@@ -184,22 +219,61 @@ func DiscoverOnInterface(ifi *net.Interface, multicastDiscoveryAddress string, s
 		return results, nil
 	}
 
-	// 指定网卡:bind 该网卡 IPv4 + 随机端口,并强制组播从该网卡发出。
-	// 原来 ListenRouterOnInterface 只 JoinGroup(接收侧指定网卡),发送仍走系统默认组播
-	// 路由接口,多网卡设备上 SEARCH_REQUEST 永远只从默认网卡出去,导致漏发现。
-	ifaceIP := interfaceIPv4(ifi)
-	if ifaceIP == nil {
+	// 指定网卡:每个 IPv4 各绑一个 socket 并发搜索。
+	// Windows 上 IP_MULTICAST_IF 按地址而不是网卡索引生效，只设网卡会固定用第一个
+	// 地址当组播源。网关在第二个地址的网段（如 192.168.123.200）时，SEARCH_RES
+	// 回不到第一个地址，结果就被漏掉。
+	ips := interfaceIPv4s(ifi)
+	if len(ips) == 0 {
 		return nil, fmt.Errorf("knx discover: interface %s has no IPv4 address", ifi.Name)
 	}
+	if len(ips) == 1 {
+		return discoverOnIPv4(ips[0], multicastDiscoveryAddress, searchTimeout)
+	}
 
+	type searchResult struct {
+		res []*knxnet.SearchRes
+		err error
+	}
+	ch := make(chan searchResult, len(ips))
+	var wg sync.WaitGroup
+	for _, ip := range ips {
+		wg.Add(1)
+		go func(ip net.IP) {
+			defer wg.Done()
+			res, err := discoverOnIPv4(ip, multicastDiscoveryAddress, searchTimeout)
+			ch <- searchResult{res, err}
+		}(ip)
+	}
+	wg.Wait()
+	close(ch)
+
+	var results []*knxnet.SearchRes
+	var firstErr error
+	for r := range ch {
+		if r.err != nil {
+			if firstErr == nil {
+				firstErr = r.err
+			}
+			continue
+		}
+		results = append(results, r.res...)
+	}
+	if len(results) == 0 && firstErr != nil {
+		return nil, firstErr
+	}
+	return results, nil
+}
+
+// discoverOnIPv4 从指定本机地址发出 SEARCH_REQUEST，并在同一 socket 上收单播响应。
+func discoverOnIPv4(ifaceIP net.IP, multicastDiscoveryAddress string, searchTimeout time.Duration) ([]*knxnet.SearchRes, error) {
 	conn, err := net.ListenUDP("udp4", &net.UDPAddr{IP: ifaceIP, Port: 0})
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Close()
 
-	pc := ipv4.NewPacketConn(conn)
-	if err := pc.SetMulticastInterface(ifi); err != nil {
+	if err := setMulticastSource(conn, ifaceIP); err != nil {
 		return nil, err
 	}
 
@@ -208,7 +282,7 @@ func DiscoverOnInterface(ifi *net.Interface, multicastDiscoveryAddress string, s
 		return nil, err
 	}
 
-	// discovery endpoint 填 网卡IP:本地端口,路由器把 SEARCH_RES 单播回这个 socket
+	// discovery endpoint 填本机地址:本地端口,路由器把 SEARCH_RES 单播回这个 socket
 	local := conn.LocalAddr().(*net.UDPAddr)
 	req, err := knxnet.NewSearchReq(&net.UDPAddr{IP: ifaceIP, Port: local.Port})
 	if err != nil {
@@ -227,7 +301,7 @@ func DiscoverOnInterface(ifi *net.Interface, multicastDiscoveryAddress string, s
 		n, _, err := conn.ReadFromUDP(buf)
 		if err != nil {
 			if ne, ok := err.(net.Error); ok && ne.Timeout() {
-				break // 等待超时,正常结束
+				break
 			}
 			return results, err
 		}
