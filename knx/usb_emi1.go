@@ -34,8 +34,8 @@ func cemiToEMI1(frame []byte) ([]byte, error) {
 		return nil, errors.New("truncated cEMI TPDU")
 	}
 	ctrl := body[0]
-	// EMI1 only has a 4-bit length. Short frames must be marked standard;
-	// cEMI leaves that bit clear for escape APCI, which this interface rejects.
+	// EMI1 only has a 4-bit length. Short frames are standard frames; set the
+	// bit if the caller left it clear.
 	if npduLen <= 15 {
 		ctrl |= 0x80
 	}

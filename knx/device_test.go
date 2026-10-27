@@ -19,6 +19,9 @@ type deviceFixture struct {
 	acks        int
 	lastWrite   []byte
 	rejectWrite bool
+	escapeStd   []bool
+	lastMemory  []byte
+	memoryStd   bool
 }
 
 func TestGroupTunnelSharesInboundWithDevice(t *testing.T) {
@@ -80,6 +83,29 @@ func (f *deviceFixture) Send(msg cemi.Message) error {
 		}
 		f.mu.Unlock()
 	case *cemi.AppData:
+		if unit.Command == cemi.Escape {
+			f.mu.Lock()
+			f.escapeStd = append(f.escapeStd, req.Control1&cemi.Control1StdFrame != 0)
+			f.mu.Unlock()
+		}
+		code := apci(unit)
+		if code&0x3c0 == apciMemoryRead || code&0x3c0 == apciMemoryWrite {
+			f.mu.Lock()
+			f.lastMemory = append([]byte(nil), unit.Data...)
+			f.memoryStd = req.Control1&cemi.Control1StdFrame != 0
+			f.mu.Unlock()
+			count := unit.Data[0]
+			responseCode := apciMemoryResponse | uint16(count)
+			response := append([]byte(nil), unit.Data[1:]...)
+			if code&0x3c0 == apciMemoryRead {
+				for i := byte(0); i < count; i++ {
+					response = append(response, 0xA0+i)
+				}
+			}
+			app := &cemi.AppData{Numbered: unit.Numbered, SeqNumber: unit.SeqNumber, Command: cemi.APCI(responseCode >> 6), Data: append([]byte{byte(responseCode & 0x3f)}, response...)}
+			f.in <- &cemi.LDataInd{LData: cemi.LData{Source: f.address, Data: app}}
+			return nil
+		}
 		var responseCode uint16
 		var response []byte
 		switch apci(unit) {
@@ -185,5 +211,65 @@ func TestDeviceReadInterfaceObjectsAndPropertyDescription(t *testing.T) {
 	f.mu.Unlock()
 	if connects != 1 || acks != 5 {
 		t.Fatalf("connects=%d acks=%d", connects, acks)
+	}
+}
+
+func TestDeviceSendsShortPropertyReadAsStandardFrame(t *testing.T) {
+	f := &deviceFixture{address: cemi.NewIndividualAddr3(1, 1, 10), in: make(chan cemi.Message, 16)}
+	defer f.Close()
+	device, err := openDevice(context.Background(), f, 0, f.address, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer device.Close()
+
+	if _, err := device.ReadPropertyValue(context.Background(), 0, PIDDeviceManufacturer, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := device.ReadPropertyValue(context.Background(), 0, PIDSerialNumber, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+	f.mu.Lock()
+	got := append([]bool(nil), f.escapeStd...)
+	f.mu.Unlock()
+	if len(got) != 2 || !got[0] || !got[1] {
+		t.Fatalf("property reads standard-frame = %v, want two standard frames", got)
+	}
+}
+
+func TestDeviceMemoryCountIsInAPCI(t *testing.T) {
+	f := &deviceFixture{address: cemi.NewIndividualAddr3(1, 1, 10), in: make(chan cemi.Message, 16)}
+	defer f.Close()
+	device, err := openDevice(context.Background(), f, 0, f.address, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer device.Close()
+
+	got, err := device.ReadMemory(context.Background(), 0x1234, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(got, []byte{0xA0, 0xA1}) {
+		t.Fatalf("memory = %x", got)
+	}
+	f.mu.Lock()
+	readFrame := append([]byte(nil), f.lastMemory...)
+	readStd := f.memoryStd
+	f.mu.Unlock()
+	if !bytes.Equal(readFrame, []byte{2, 0x12, 0x34}) || !readStd {
+		t.Fatalf("memory read tpdu = %x standard=%v, want 02 12 34 as a standard frame", readFrame, readStd)
+	}
+
+	payload := bytes.Repeat([]byte{0x5A}, 13)
+	if err := device.WriteMemory(context.Background(), 0x0100, payload); err != nil {
+		t.Fatal(err)
+	}
+	f.mu.Lock()
+	writeFrame := append([]byte(nil), f.lastMemory...)
+	writeStd := f.memoryStd
+	f.mu.Unlock()
+	if writeStd || writeFrame[0] != 13 || writeFrame[1] != 0x01 || writeFrame[2] != 0x00 || !bytes.Equal(writeFrame[3:], payload) {
+		t.Fatalf("memory write tpdu standard=%v data=%x", writeStd, writeFrame)
 	}
 }

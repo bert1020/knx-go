@@ -20,6 +20,11 @@ type USBDevice = knxusb.Device
 // ErrUSBUnsupported indicates that this operating system has no USB HID backend.
 var ErrUSBUnsupported = knxusb.ErrUnsupported
 
+// ErrLDataNegativeConfirm is an EMI1 L_Data.con with the confirm flag set.
+// The local interface missed the link-layer acknowledgement. The remote
+// device may still have received the frame.
+var ErrLDataNegativeConfirm = errors.New("EMI1 L_Data.con reported an error")
+
 // Timed-out writes are retried at most this many times. A timed-out report
 // was not delivered to the interface, so retrying it is safe.
 const usbWriteAttempts = 8
@@ -181,7 +186,7 @@ func (u *USB) read(ready chan<- error) {
 			if con, ok := msg.(*cemi.LDataCon); ok {
 				var conErr error
 				if con.Control1&cemi.Control1HasError != 0 {
-					conErr = errors.New("EMI1 L_Data.con reported an error")
+					conErr = ErrLDataNegativeConfirm
 				}
 				u.finishCon(conErr)
 				continue

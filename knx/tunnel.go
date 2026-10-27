@@ -34,11 +34,15 @@ type TunnelConfig struct {
 }
 
 // DefaultTunnelConfig is a good default configuration for a Tunnel client.
+// SendLocalAddress matches ETS: the connect request carries this client's real
+// IPv4 and port. 0.0.0.0 is legal (the server is supposed to use the UDP source)
+// but some routers, including SF-KnxNetIp, accept that connect and then reject
+// every tunnelling request with E_CONNECTION_ID.
 var DefaultTunnelConfig = TunnelConfig{
 	ResendInterval:    500 * time.Millisecond,
 	HeartbeatInterval: 10 * time.Second,
 	ResponseTimeout:   10 * time.Second,
-	SendLocalAddress:  false,
+	SendLocalAddress:  true,
 	UseTCP:            false,
 }
 

@@ -193,8 +193,13 @@ func TestTunnelConn_requestConn(t *testing.T) {
 			defer client.Close()
 
 			conn := Tunnel{
-				sock:   client,
-				config: DefaultTunnelConfig,
+				sock: client,
+				config: TunnelConfig{
+					ResendInterval:    500 * time.Millisecond,
+					HeartbeatInterval: 1 * time.Second,
+					ResponseTimeout:   1 * time.Second,
+					SendLocalAddress:  false,
+				},
 			}
 
 			err := conn.requestConn()

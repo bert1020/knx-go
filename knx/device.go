@@ -32,12 +32,17 @@ const (
 	// standard escape pair 0x3DF/0x3E0 is silently ignored by those devices.
 	vendorFunctionPropertyStateRead = 0x2c8
 	vendorFunctionPropertyStateResp = 0x2c9
-	PIDObjectType                   = 1
-	PIDMaskVersion                  = 11
-	PIDDeviceManufacturer           = 12
-	PIDIOList                       = 71
-	PIDSerialNumber                 = 51
-	PIDHardwareType                 = 78
+	// Property identifiers from 03_05_01 Resources. The mask version is not one
+	// of them: it is the two-byte device descriptor returned by
+	// ReadDeviceDescriptor.
+	PIDObjectType         = 1
+	PIDSerialNumber       = 11
+	PIDDeviceManufacturer = 12
+	PIDOrderInfo          = 15
+	PIDVersion            = 25
+	PIDMaxAPDULength      = 56
+	PIDIOList             = 71
+	PIDHardwareType       = 78
 )
 
 // Device is a session addressed by a KNX individual (physical) address.
@@ -194,11 +199,10 @@ func (d *Device) send(unit cemi.TransportUnit) error {
 	// frames that request a link-layer ack (verified against a SeaWin device
 	// and by ETS, which never sets the bit either).
 	control := cemi.Control1NoRepeat | cemi.Control1NoSysBroadcast | cemi.Control1Prio(cemi.PrioSystem)
-	// Extended APCI (escape coding) must be sent in extended frame format:
-	// the Extended Frame Format bit stays clear, or devices silently drop the frame.
-	if app, ok := unit.(*cemi.AppData); ok && app.Command == cemi.Escape {
-		// keep EFF (do not set Control1StdFrame)
-	} else if unit.Size() <= 17 {
+	// Match ETS: a standard frame whenever the NPDU fits in 15 octets, including
+	// short escape APCI such as property reads. Extended frames are only for
+	// longer APDUs. Some KNXnet/IP routers drop extended frames outright.
+	if unit.Size() <= 17 {
 		control |= cemi.Control1StdFrame
 	}
 	frame := &cemi.LDataReq{LData: cemi.LData{
@@ -248,25 +252,33 @@ func (d *Device) request(ctx context.Context, code, expected uint16, payload []b
 		return nil, err
 	}
 	app := &cemi.AppData{Numbered: d.connected, SeqNumber: d.sequence, Command: cemi.APCI(code >> 6), Data: append([]byte{byte(code & 0x3f)}, payload...)}
-	// d.send relays through the tunnel's requestTunnel, whose resend loop runs
+	if err := d.deliver(ctx, app); err != nil {
+		return nil, err
+	}
+	return d.await(ctx, expected)
+}
+
+func (d *Device) deliver(ctx context.Context, unit cemi.TransportUnit) error {
+	// send relays through the tunnel's requestTunnel, whose resend loop runs
 	// on its own ResponseTimeout (default 10s) and does not honor ctx. Run it in
 	// a goroutine so the caller's deadline (e.g. a short management timeout)
 	// also bounds the sending phase; an abandoned requestTunnel is bounded by
 	// ResponseTimeout and released when the tunnel closes.
 	sendErr := make(chan error, 1)
-	go func() { sendErr <- d.send(app) }()
+	go func() { sendErr <- d.send(unit) }()
 	select {
 	case err := <-sendErr:
-		if err != nil {
-			return nil, err
-		}
+		return err
 	case <-ctx.Done():
-		return nil, ctx.Err()
+		return ctx.Err()
 	case <-d.done:
-		return nil, errors.New("device is closed")
+		return errors.New("device is closed")
 	case <-d.linkDone:
-		return nil, errors.New("cEMI connection is closed")
+		return errors.New("cEMI connection is closed")
 	}
+}
+
+func (d *Device) await(ctx context.Context, expected uint16) ([]byte, error) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -276,46 +288,59 @@ func (d *Device) request(ctx context.Context, code, expected uint16, payload []b
 		case <-d.linkDone:
 			return nil, errors.New("cEMI connection is closed")
 		case frame := <-d.inbound:
-			if frame == nil {
-				continue
+			data, done, err := d.accept(frame, expected)
+			if err != nil {
+				return nil, err
 			}
-			switch unit := frame.Data.(type) {
-			case *cemi.ControlData:
-				if !unit.Numbered && unit.Command == 1 {
-					return nil, errors.New("device disconnected")
-				}
-				if d.connected && unit.Numbered && unit.SeqNumber == d.sequence && unit.Command == 3 {
-					return nil, errors.New("device rejected transport packet")
-				}
-			case *cemi.AppData:
-				// Escape-APCI responses carry the 10-bit APCI cleanly in
-				// Command and Data[0]. Other responses share the first data
-				// byte with APCI bits 5:0, so only the Command part must
-				// match and Data[0] is response payload, not APCI.
-				isEscape := unit.Command == cemi.Escape
-				if isEscape {
-					if apci(unit) != expected {
-						continue
-					}
-				} else if apci(unit)&0x3c0 != expected&0x3c0 {
-					continue
-				}
-				if d.connected {
-					if !unit.Numbered || unit.SeqNumber != d.receiveSequence {
-						continue
-					}
-					if err := d.send(&cemi.ControlData{Numbered: true, SeqNumber: unit.SeqNumber, Command: 2}); err != nil {
-						return nil, err
-					}
-					d.receiveSequence = (d.receiveSequence + 1) & 15
-					d.sequence = (d.sequence + 1) & 15
-				}
-				if isEscape {
-					return append([]byte(nil), unit.Data[1:]...), nil
-				}
-				return append([]byte(nil), unit.Data...), nil
+			if done {
+				return data, nil
 			}
 		}
+	}
+}
+
+func (d *Device) accept(frame *cemi.LDataInd, expected uint16) (data []byte, done bool, err error) {
+	if frame == nil {
+		return nil, false, nil
+	}
+	switch unit := frame.Data.(type) {
+	case *cemi.ControlData:
+		if !unit.Numbered && unit.Command == 1 {
+			return nil, false, errors.New("device disconnected")
+		}
+		if d.connected && unit.Numbered && unit.SeqNumber == d.sequence && unit.Command == 3 {
+			return nil, false, errors.New("device rejected transport packet")
+		}
+		return nil, false, nil
+	case *cemi.AppData:
+		// Escape-APCI responses carry the 10-bit APCI cleanly in
+		// Command and Data[0]. Other responses share the first data
+		// byte with APCI bits 5:0, so only the Command part must
+		// match and Data[0] is response payload, not APCI.
+		isEscape := unit.Command == cemi.Escape
+		if isEscape {
+			if apci(unit) != expected {
+				return nil, false, nil
+			}
+		} else if apci(unit)&0x3c0 != expected&0x3c0 {
+			return nil, false, nil
+		}
+		if d.connected {
+			if !unit.Numbered || unit.SeqNumber != d.receiveSequence {
+				return nil, false, nil
+			}
+			if err := d.send(&cemi.ControlData{Numbered: true, SeqNumber: unit.SeqNumber, Command: 2}); err != nil {
+				return nil, false, err
+			}
+			d.receiveSequence = (d.receiveSequence + 1) & 15
+			d.sequence = (d.sequence + 1) & 15
+		}
+		if isEscape {
+			return append([]byte(nil), unit.Data[1:]...), true, nil
+		}
+		return append([]byte(nil), unit.Data...), true, nil
+	default:
+		return nil, false, nil
 	}
 }
 
@@ -560,14 +585,14 @@ func (d *Device) ReadInterfaceObjects(ctx context.Context) ([]InterfaceObject, e
 	return objects, nil
 }
 
-// ReadMemory reads 1..63 octets of memory starting at address. The A_Memory
-// protocol limits the octet counter to six bits. Requests larger than a
-// standard frame use extended framing automatically.
+// ReadMemory reads 1..63 octets of memory starting at address. 03_03_07 puts
+// the octet count in the low six bits of A_Memory_Read, followed by the
+// 16-bit address. A short request is a standard frame, the same as ETS.
 func (d *Device) ReadMemory(ctx context.Context, address uint16, count uint8) ([]byte, error) {
 	if count == 0 || count > 63 {
 		return nil, errors.New("memory read count must be 1..63")
 	}
-	data, err := d.request(ctx, apciMemoryRead, apciMemoryResponse, []byte{count, byte(address >> 8), byte(address)})
+	data, err := d.request(ctx, apciMemoryRead|uint16(count), apciMemoryResponse, []byte{byte(address >> 8), byte(address)})
 	if err != nil {
 		return nil, err
 	}
@@ -583,15 +608,17 @@ func (d *Device) ReadMemory(ctx context.Context, address uint16, count uint8) ([
 	return append([]byte(nil), data[3:3+count]...), nil
 }
 
-// WriteMemory writes 1..63 octets of data to memory starting at address. The
+// WriteMemory writes 1..63 octets of data to memory starting at address.
+// 03_03_07 puts the octet count in the low six bits of A_Memory_Write. The
 // device echoes the written octets; the write is only acknowledged when the
-// echo matches the request.
+// echo matches the request. Writes that no longer fit in 15 octets go out as
+// extended frames.
 func (d *Device) WriteMemory(ctx context.Context, address uint16, data []byte) error {
 	if len(data) == 0 || len(data) > 63 {
 		return errors.New("memory write data must contain 1..63 octets")
 	}
-	payload := append([]byte{byte(len(data)), byte(address >> 8), byte(address)}, data...)
-	resp, err := d.request(ctx, apciMemoryWrite, apciMemoryResponse, payload)
+	payload := append([]byte{byte(address >> 8), byte(address)}, data...)
+	resp, err := d.request(ctx, apciMemoryWrite|uint16(len(data)), apciMemoryResponse, payload)
 	if err != nil {
 		return err
 	}
