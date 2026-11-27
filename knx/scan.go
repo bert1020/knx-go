@@ -3,8 +3,7 @@ package knx
 // 物理地址扫描，过程与 ETS「行扫描」一致（依据 USB 抓包）：
 //
 //  1. 按约 60ms 的间隔向每个物理地址只发 T_Connect，不等待设备应答，
-//     也不靠 L_Data.con 判断在线。cEMI 对空地址也回成功确认；EMI1 的负确认
-//     只表示本机没收到链路应答，不能据此丢掉这个地址。
+//     也不靠 L_Data.con 的错误位判断在线（这只 cEMI 接口对空地址也回成功确认）。
 //  2. 在线设备会建立传输层连接；连接空闲约 6 秒后设备主动发 T_Disconnect。
 //     抓包里 1.1.2 在 T_Connect 之后 6.1 秒回了 T_Disconnect。
 //  3. 收到 T_Disconnect 才打开一次管理连接，读设备描述符（掩码版本）。
@@ -27,9 +26,9 @@ import (
 )
 
 const (
-	// pidDeviceSerial 是设备对象的序列号（03_05_01 PID_SERIAL_NUMBER）。
-	pidDeviceSerial = PIDSerialNumber
-	// pidSerialNumberAlt 不是标准序列号。个别设备把序列号放在属性 51，标准里 51 是路由器的 PID_ROUTING_COUNT。
+	// pidDeviceSerial 是设备对象的序列号（KNX PID_SERIAL_NUMBER）。
+	pidDeviceSerial = 11
+	// pidSerialNumberAlt 是部分设备使用的另一处序列号属性。
 	pidSerialNumberAlt = 51
 	// readAttempts 是同一台已发现设备的管理读取次数，含第一次。
 	readAttempts = 3
@@ -144,16 +143,12 @@ func ScanAddresses(ctx context.Context, link Link, addrs []cemi.IndividualAddr, 
 		}
 		s.wasProbed[addr] = true
 		if err := s.send(addr, &cemi.ControlData{Command: 0}); err != nil {
+			delete(s.wasProbed, addr)
 			if fatalLink(err) {
 				s.fatal = err
 				break
 			}
-			// EMI1 的负确认只表示本机没收到 L2 应答。设备仍可能已经收下
-			// T_Connect，大约 6 秒后还会发 T_Disconnect。这个地址要继续等。
-			if !errors.Is(err, ErrLDataNegativeConfirm) {
-				delete(s.wasProbed, addr)
-				continue
-			}
+			continue
 		}
 		lastProbe = time.Now()
 		s.drainFor(s.cfg.Interval)

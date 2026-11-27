@@ -50,6 +50,7 @@ func ListUSBDevices() ([]USBDevice, error) {
 type USB struct {
 	file    knxusb.Port
 	inbound chan cemi.Message
+	groups  chan GroupEvent
 	done    chan struct{}
 	once    sync.Once
 	writeMu sync.Mutex
@@ -71,7 +72,12 @@ func NewUSB(ctx context.Context, path string) (*USB, error) {
 	if err != nil {
 		return nil, err
 	}
-	u := &USB{file: port, inbound: make(chan cemi.Message, 64), done: make(chan struct{})}
+	u := &USB{
+		file:    port,
+		inbound: make(chan cemi.Message, 64),
+		groups:  make(chan GroupEvent, 64),
+		done:    make(chan struct{}),
+	}
 	if err := u.write(0x0f, 0x01, []byte{0x01}); err != nil {
 		port.Close()
 		return nil, err
@@ -120,13 +126,30 @@ func (u *USB) write(protocol, service byte, body []byte) error {
 	return nil
 }
 
+// cemiServerPropWrite builds an M_PropWrite.req for one byte of the cEMI
+// Server Object (interface object type 8, instance 1, element index 1).
+// PID values are the decimal identifiers from 03_05_01: 52 is PID_COMM_MODE,
+// 56 is PID_TRANSP_ENABLE.
+func cemiServerPropWrite(pid, value byte) []byte {
+	return []byte{0xF6, 0x00, 0x08, 0x01, pid, 0x10, 0x01, value}
+}
+
 // selectEMI picks cEMI when the interface offers it, otherwise EMI1.
 // EMI1 also needs PC_SET_VAL.req (address 0x0060, value 0x12) to enter link layer.
+// cEMI stays in the data link layer (03_06_03) and turns on link-layer
+// transparency, so group telegrams are indicated even when they are not in
+// the interface filter table. Busmonitor mode is not used: it cannot send.
 func (u *USB) selectEMI(mask uint16) error {
 	switch {
 	case mask&4 != 0:
 		u.emi = 0x03
-		return u.write(0x0f, 0x03, []byte{0x05, 0x03})
+		if err := u.write(0x0f, 0x03, []byte{0x05, 0x03}); err != nil {
+			return err
+		}
+		if err := u.write(0x01, 0x03, cemiServerPropWrite(52, 0x00)); err != nil {
+			return err
+		}
+		return u.write(0x01, 0x03, cemiServerPropWrite(56, 0x01))
 	case mask&1 != 0:
 		u.emi = 0x01
 		if err := u.write(0x0f, 0x03, []byte{0x05, 0x01}); err != nil {
@@ -139,6 +162,7 @@ func (u *USB) selectEMI(mask uint16) error {
 }
 
 func (u *USB) read(ready chan<- error) {
+	defer close(u.groups)
 	defer close(u.inbound)
 	var assembler knxusb.Assembler
 	negotiated := false
@@ -192,12 +216,27 @@ func (u *USB) read(ready chan<- error) {
 				continue
 			}
 		}
+		publishGroup(u.groups, u.done, msg)
+		// A full inbound buffer must not stall this reader. Module monitoring
+		// only consumes Groups, and a stalled reader would drop every later
+		// group telegram on the floor.
 		select {
 		case u.inbound <- msg:
 		case <-u.done:
 			return
+		default:
 		}
 	}
+}
+
+// Groups returns group telegrams (L_Data.ind to a group address).
+// The channel stays open for the life of the USB connection and is independent
+// of Inbound, so a device session or a scan can run while group traffic is read.
+func (u *USB) Groups() <-chan GroupEvent {
+	if u == nil {
+		return nil
+	}
+	return u.groups
 }
 
 func (u *USB) finishCon(err error) {
@@ -279,9 +318,10 @@ func (u *USB) Close() {
 }
 
 // GroupUSB exposes group telegrams using the same API as GroupTunnel.
+// Group events come from USB.Groups, so Inbound on the embedded USB remains
+// available for device sessions and scans.
 type GroupUSB struct {
 	*USB
-	inbound chan GroupEvent
 }
 
 func NewGroupUSB(ctx context.Context, path string) (*GroupUSB, error) {
@@ -289,13 +329,11 @@ func NewGroupUSB(ctx context.Context, path string) (*GroupUSB, error) {
 	if err != nil {
 		return nil, err
 	}
-	g := &GroupUSB{USB: u, inbound: make(chan GroupEvent)}
-	go serveGroupInbound(u.Inbound(), g.inbound)
-	return g, nil
+	return &GroupUSB{USB: u}, nil
 }
 
 func (g *GroupUSB) Send(event GroupEvent) error {
 	return g.USB.Send(&cemi.LDataReq{LData: buildGroupOutbound(event)})
 }
 
-func (g *GroupUSB) Inbound() <-chan GroupEvent { return g.inbound }
+func (g *GroupUSB) Inbound() <-chan GroupEvent { return g.Groups() }

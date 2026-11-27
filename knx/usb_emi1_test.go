@@ -7,6 +7,17 @@ import (
 	"github.com/vapourismo/knx-go/knx/cemi"
 )
 
+func TestCemiServerPropWrite(t *testing.T) {
+	mode := cemiServerPropWrite(52, 0x00)
+	if !bytes.Equal(mode, []byte{0xF6, 0x00, 0x08, 0x01, 52, 0x10, 0x01, 0x00}) {
+		t.Fatalf("comm mode %#x", mode)
+	}
+	transparent := cemiServerPropWrite(56, 0x01)
+	if !bytes.Equal(transparent, []byte{0xF6, 0x00, 0x08, 0x01, 56, 0x10, 0x01, 0x01}) {
+		t.Fatalf("transparency %#x", transparent)
+	}
+}
+
 func TestEMI1LDataRoundTrip(t *testing.T) {
 	msg := &cemi.LDataReq{LData: cemi.LData{
 		Control1:    cemi.Control1StdFrame | cemi.Control1NoRepeat | cemi.Control1Prio(cemi.PrioLow),

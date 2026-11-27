@@ -48,32 +48,54 @@ type GroupClient interface {
 	Inbound() <-chan GroupEvent
 }
 
+// groupEventFrom extracts a group telegram from a link-layer indication.
+// KNXnet/IP tunnelling (03_08_04, data link layer) and a USB interface in
+// cEMI/EMI1 link-layer mode (03_06_03) both deliver these as L_Data.ind:
+// destination type group, APCI GroupValue_Read, GroupValue_Response or
+// GroupValue_Write. Busmonitor (L_Busmon.ind) is a different, receive-only mode.
+func groupEventFrom(msg cemi.Message) (GroupEvent, bool) {
+	ind, ok := msg.(*cemi.LDataInd)
+	if !ok || !ind.Control2.IsGroupAddr() {
+		return GroupEvent{}, false
+	}
+	app, ok := ind.Data.(*cemi.AppData)
+	if !ok || !app.Command.IsGroupCommand() {
+		return GroupEvent{}, false
+	}
+	return GroupEvent{
+		Command:     GroupCommand(app.Command),
+		Source:      ind.Source,
+		Destination: cemi.GroupAddr(ind.Destination),
+		Data:        append([]byte(nil), app.Data...),
+	}, true
+}
+
+// publishGroup forwards a group telegram without blocking the cEMI reader.
+// A full channel drops the event so device traffic on the other channel keeps moving.
+func publishGroup(ch chan GroupEvent, done <-chan struct{}, msg cemi.Message) {
+	ev, ok := groupEventFrom(msg)
+	if !ok || ch == nil {
+		return
+	}
+	defer func() { recover() }()
+	select {
+	case ch <- ev:
+	case <-done:
+	default:
+	}
+}
+
 // serveGroupInbound serves a group communication.
 func serveGroupInbound(inbound <-chan cemi.Message, outbound chan<- GroupEvent) {
 	util.Log(inbound, "Started worker")
 	defer util.Log(inbound, "Worker exited")
 
 	for msg := range inbound {
-		if ind, ok := msg.(*cemi.LDataInd); ok {
-			// Filter indications that do not target group addresses.
-			if !ind.Control2.IsGroupAddr() {
-				util.Log(inbound, "Received L_Data.ind does not target a group address")
-				continue
-			}
-
-			if app, ok := ind.Data.(*cemi.AppData); ok && app.Command.IsGroupCommand() {
-				outbound <- GroupEvent{
-					Command:     GroupCommand(app.Command),
-					Source:      ind.Source,
-					Destination: cemi.GroupAddr(ind.Destination),
-					Data:        app.Data,
-				}
-			} else {
-				util.Log(inbound, "Received L_Data.ind frame does not contain application data")
-			}
-		} else {
-			util.Log(inbound, "Received frame is not a L_Data.ind frame")
+		if ev, ok := groupEventFrom(msg); ok {
+			outbound <- ev
+			continue
 		}
+		util.Log(inbound, "Received frame is not a group telegram")
 	}
 
 	close(outbound)

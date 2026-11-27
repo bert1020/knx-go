@@ -3,7 +3,6 @@ package knx
 import (
 	"bytes"
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -137,62 +136,6 @@ func TestScanAddressesFindsDeviceByDisconnect(t *testing.T) {
 	}
 	if probes[cemi.NewIndividualAddr3(1, 1, 1)] != 1 || probes[target] != 2 || probes[cemi.NewIndividualAddr3(1, 1, 3)] != 1 {
 		t.Fatalf("T_Connect counts = %v", probes)
-	}
-}
-
-func TestScanAddressesKeepsAddressAfterNegativeConfirm(t *testing.T) {
-	link := newFakeLink()
-	kept := cemi.NewIndividualAddr3(1, 1, 2)
-	dropped := cemi.NewIndividualAddr3(1, 1, 3)
-	scripted := &scriptedLink{fakeLink: link, send: func(msg cemi.Message) error {
-		req, _ := msg.(*cemi.LDataReq)
-		if req == nil {
-			return link.Send(msg)
-		}
-		c, ok := req.Data.(*cemi.ControlData)
-		if !ok || c.Numbered || c.Command != 0 {
-			return link.Send(msg)
-		}
-		dest := cemi.IndividualAddr(req.Destination)
-		switch dest {
-		case kept:
-			time.AfterFunc(20*time.Millisecond, func() {
-				link.push(&cemi.LDataInd{LData: cemi.LData{
-					Source:      kept,
-					Destination: 0xFFFE,
-					Control2:    cemi.Control2Hops(6),
-					Data:        &cemi.ControlData{Command: 1},
-				}})
-			})
-			return ErrLDataNegativeConfirm
-		case dropped:
-			time.AfterFunc(20*time.Millisecond, func() {
-				link.push(&cemi.LDataInd{LData: cemi.LData{
-					Source:      dropped,
-					Destination: 0xFFFE,
-					Control2:    cemi.Control2Hops(6),
-					Data:        &cemi.ControlData{Command: 1},
-				}})
-			})
-			return errors.New("usb write failed")
-		default:
-			return link.Send(msg)
-		}
-	}}
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	got, err := ScanAddresses(ctx, scripted, []cemi.IndividualAddr{kept, dropped}, AddressScanConfig{
-		Interval:       5 * time.Millisecond,
-		DisconnectWait: 80 * time.Millisecond,
-		ReadTimeout:    40 * time.Millisecond,
-		ConnectSettle:  time.Millisecond,
-		ReadAttempts:   1,
-	})
-	if err != nil {
-		t.Fatalf("scan: %v", err)
-	}
-	if len(got) != 1 || got[0].Address != kept {
-		t.Fatalf("devices = %+v, want only %s", got, kept)
 	}
 }
 

@@ -32,17 +32,12 @@ const (
 	// standard escape pair 0x3DF/0x3E0 is silently ignored by those devices.
 	vendorFunctionPropertyStateRead = 0x2c8
 	vendorFunctionPropertyStateResp = 0x2c9
-	// Property identifiers from 03_05_01 Resources. The mask version is not one
-	// of them: it is the two-byte device descriptor returned by
-	// ReadDeviceDescriptor.
-	PIDObjectType         = 1
-	PIDSerialNumber       = 11
-	PIDDeviceManufacturer = 12
-	PIDOrderInfo          = 15
-	PIDVersion            = 25
-	PIDMaxAPDULength      = 56
-	PIDIOList             = 71
-	PIDHardwareType       = 78
+	PIDObjectType                   = 1
+	PIDMaskVersion                  = 11
+	PIDDeviceManufacturer           = 12
+	PIDIOList                       = 71
+	PIDSerialNumber                 = 51
+	PIDHardwareType                 = 78
 )
 
 // Device is a session addressed by a KNX individual (physical) address.
@@ -585,14 +580,14 @@ func (d *Device) ReadInterfaceObjects(ctx context.Context) ([]InterfaceObject, e
 	return objects, nil
 }
 
-// ReadMemory reads 1..63 octets of memory starting at address. 03_03_07 puts
-// the octet count in the low six bits of A_Memory_Read, followed by the
-// 16-bit address. A short request is a standard frame, the same as ETS.
+// ReadMemory reads 1..63 octets of memory starting at address. The A_Memory
+// protocol limits the octet counter to six bits. Requests larger than a
+// standard frame use extended framing automatically.
 func (d *Device) ReadMemory(ctx context.Context, address uint16, count uint8) ([]byte, error) {
 	if count == 0 || count > 63 {
 		return nil, errors.New("memory read count must be 1..63")
 	}
-	data, err := d.request(ctx, apciMemoryRead|uint16(count), apciMemoryResponse, []byte{byte(address >> 8), byte(address)})
+	data, err := d.request(ctx, apciMemoryRead, apciMemoryResponse, []byte{count, byte(address >> 8), byte(address)})
 	if err != nil {
 		return nil, err
 	}
@@ -608,17 +603,15 @@ func (d *Device) ReadMemory(ctx context.Context, address uint16, count uint8) ([
 	return append([]byte(nil), data[3:3+count]...), nil
 }
 
-// WriteMemory writes 1..63 octets of data to memory starting at address.
-// 03_03_07 puts the octet count in the low six bits of A_Memory_Write. The
+// WriteMemory writes 1..63 octets of data to memory starting at address. The
 // device echoes the written octets; the write is only acknowledged when the
-// echo matches the request. Writes that no longer fit in 15 octets go out as
-// extended frames.
+// echo matches the request.
 func (d *Device) WriteMemory(ctx context.Context, address uint16, data []byte) error {
 	if len(data) == 0 || len(data) > 63 {
 		return errors.New("memory write data must contain 1..63 octets")
 	}
-	payload := append([]byte{byte(address >> 8), byte(address)}, data...)
-	resp, err := d.request(ctx, apciMemoryWrite|uint16(len(data)), apciMemoryResponse, payload)
+	payload := append([]byte{byte(len(data)), byte(address >> 8), byte(address)}, data...)
+	resp, err := d.request(ctx, apciMemoryWrite, apciMemoryResponse, payload)
 	if err != nil {
 		return err
 	}

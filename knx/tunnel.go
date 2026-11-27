@@ -26,6 +26,12 @@ type TunnelConfig struct {
 	// ResponseTimeout specifies how long to wait for a response.
 	ResponseTimeout time.Duration
 
+	// DisableResend turns off retransmission of tunnel requests whose acknowledgement
+	// has not arrived yet. Each request is then transmitted exactly once; the caller
+	// is expected to retry on failure. Useful when duplicate frames on the bus cause
+	// devices to answer the same request several times.
+	DisableResend bool
+
 	// SendLocalAddress specifies if local address should be sent on connection request.
 	SendLocalAddress bool
 
@@ -85,6 +91,7 @@ type Tunnel struct {
 
 	// Incoming requests
 	inbound chan cemi.Message
+	groups  chan GroupEvent
 
 	// Goroutine controller
 	done chan struct{}
@@ -269,9 +276,14 @@ func (conn *Tunnel) requestTunnel(data cemi.Message) error {
 		return nil
 	}
 
-	// Start the resend timer.
-	ticker := time.NewTicker(conn.config.ResendInterval)
-	defer ticker.Stop()
+	// Start the resend timer. A nil channel blocks forever, so with resending
+	// disabled the request is sent exactly once and only the timeout remains.
+	var resend <-chan time.Time
+	if !conn.config.DisableResend {
+		ticker := time.NewTicker(conn.config.ResendInterval)
+		defer ticker.Stop()
+		resend = ticker.C
+	}
 
 	// Setup timeout.
 	timeout := time.After(conn.config.ResponseTimeout)
@@ -283,7 +295,7 @@ func (conn *Tunnel) requestTunnel(data cemi.Message) error {
 			return errResponseTimeout
 
 		// Resend timer fired.
-		case <-ticker.C:
+		case <-resend:
 			err := conn.sock.Send(req)
 			if err != nil {
 				return err
@@ -361,6 +373,7 @@ func (conn *Tunnel) handleDiscRes(res *knxnet.DiscRes) error {
 // pushInbound sends the message through the inbound channel. If the sending blocks, it will launch
 // a goroutine which will do the sending.
 func (conn *Tunnel) pushInbound(msg cemi.Message) {
+	publishGroup(conn.groups, conn.done, msg)
 	select {
 	case conn.inbound <- msg:
 
@@ -552,6 +565,7 @@ func (conn *Tunnel) serve() {
 	defer util.Log(conn, "Worker exited")
 
 	defer close(conn.ack)
+	defer close(conn.groups)
 	defer close(conn.inbound)
 	defer conn.wait.Done()
 
@@ -607,6 +621,7 @@ func NewTunnel(
 		layer:   layer,
 		ack:     make(chan *knxnet.TunnelRes),
 		inbound: make(chan cemi.Message),
+		groups:  make(chan GroupEvent, 64),
 		done:    make(chan struct{}),
 	}
 
@@ -640,6 +655,16 @@ func (conn *Tunnel) Close() {
 // underlying Socket closes its inbound channel or when the connection is terminated.
 func (conn *Tunnel) Inbound() <-chan cemi.Message {
 	return conn.inbound
+}
+
+// Groups returns group telegrams (L_Data.ind to a group address).
+// The channel is independent of Inbound, so device sessions and scans can use
+// Inbound while group traffic is read here. It is closed with the tunnel.
+func (conn *Tunnel) Groups() <-chan GroupEvent {
+	if conn == nil {
+		return nil
+	}
+	return conn.groups
 }
 
 // Send relays a tunnel request to the gateway with the given contents.
