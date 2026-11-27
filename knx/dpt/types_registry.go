@@ -34,6 +34,21 @@ var dptTypes = map[string]Datapoint{
 	"1.023": new(DPT_1023),
 	"1.024": new(DPT_1024),
 	"1.100": new(DPT_1100),
+
+	// 2.xxx
+	"2.001": new(DPT_2001),
+	"2.002": new(DPT_2002),
+	"2.003": new(DPT_2003),
+	"2.004": new(DPT_2004),
+	"2.005": new(DPT_2005),
+	"2.006": new(DPT_2006),
+	"2.007": new(DPT_2007),
+	"2.008": new(DPT_2008),
+	"2.009": new(DPT_2009),
+	"2.010": new(DPT_2010),
+	"2.011": new(DPT_2011),
+	"2.012": new(DPT_2012),
+
 	//3.xxx
 	"3.007": new(DPT_3007),
 	// 5.xxx
